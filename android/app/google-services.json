@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "810323423923",
+    "project_id": "englicoapp",
+    "storage_bucket": "englicoapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810323423923:android:d4bd1dd64c4c30a31d76c6",
+        "android_client_info": {
+          "package_name": "com.englico.englico"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810323423923-52s9s5n2scjiloehfhiftcv34nml4pig.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.englico.englico",
+            "certificate_hash": "7431bed52e5c7cf3a2d287dd21c5d0dea9c5cd7e"
+          }
+        },
+        {
+          "client_id": "810323423923-76bc5stl34cfqa6m1tqfku8gnafa508c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.englico.englico",
+            "certificate_hash": "682262d3bfd93af2928e4f05c5921c1eee5900c8"
+          }
+        },
+        {
+          "client_id": "810323423923-kvvnj2eufb5gior8j8q61q636m3os056.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmJUOybDukOEmI8gQOCowbOBKiyLVt3eE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810323423923-kvvnj2eufb5gior8j8q61q636m3os056.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810323423923-p9caisijga7s3lil2gnamftr7t9g3e6g.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.englico.englico"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

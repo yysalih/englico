@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>810323423923-p9caisijga7s3lil2gnamftr7t9g3e6g.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.810323423923-p9caisijga7s3lil2gnamftr7t9g3e6g</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>810323423923-52s9s5n2scjiloehfhiftcv34nml4pig.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBpJo1YT3sMt1F2z9Wf9nV1zi0BQveyu90</string>
+	<key>GCM_SENDER_ID</key>
+	<string>810323423923</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.englico.englico</string>
+	<key>PROJECT_ID</key>
+	<string>englicoapp</string>
+	<key>STORAGE_BUCKET</key>
+	<string>englicoapp.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:810323423923:ios:36e94752927aef431d76c6</string>
+</dict>
+</plist>
