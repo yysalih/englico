@@ -108,6 +108,7 @@ class AuthController extends StateNotifier<AuthState> {
   createNewUser(String uid, User _user) async {
 
     UserModel userModel = UserModel(
+      tests: [], words: [], contents: [],
       image: _user.photoURL == null || _user.photoURL == ""
           ? "https://firebasestorage.googleapis.com/v0/b/pararixapp.appspot.com/o/user.png"
           "?alt=media&token=ba1f94cd-2a31-4a57-8e19-33b9af3957f5"
@@ -116,7 +117,7 @@ class AuthController extends StateNotifier<AuthState> {
       uid: uid,
       subscriptionDate: DateTime.now().millisecondsSinceEpoch,
       email: _user.email.toString(),
-      name: _user.displayName.toString(),
+      name: _user.displayName.toString().isEmpty ? _user.email.toString().split("@").first : _user.displayName.toString(),
       point: 0,
     );
 

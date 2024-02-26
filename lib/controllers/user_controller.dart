@@ -10,14 +10,17 @@ import '../services/authentication_service.dart';
 
 class UserState {
   final bool canWatch;
+  final int activeIndex;
 
-  UserState({required this.canWatch});
+  UserState( {required this.canWatch, required this.activeIndex,});
 
   UserState copyWith({
     bool? canWatch,
+    int? activeIndex,
 
   }) => UserState(
     canWatch: canWatch ?? this.canWatch,
+    activeIndex: activeIndex ?? this.activeIndex,
   );
 }
 
@@ -95,8 +98,18 @@ class UserController extends StateNotifier<UserState> {
 
     return false;
   }
+
+  addWordInUserWords(String wordUid, UserModel user) async {
+    await FirebaseFirestore.instance.collection("users").doc(user.uid).update({
+      "words" : user.words!..add(wordUid),
+    });
+  }
+
+  changeActiveIndex(int index) {
+    state = state.copyWith(activeIndex: index);
+  }
 }
 
 final userController = StateNotifierProvider<UserController, UserState>((ref) => UserController(UserState(
-    canWatch: true
+    canWatch: true, activeIndex: 0
 )));

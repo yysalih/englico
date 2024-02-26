@@ -1,3 +1,6 @@
+import 'package:englico/repository/shared_preferences_repository.dart';
+import 'package:englico/views/language_level_view.dart';
+import 'package:englico/widgets/status_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weather_animation/weather_animation.dart';
@@ -14,33 +17,27 @@ class MainView extends ConsumerWidget {
     final mainWatch = ref.watch(mainController.notifier);
     final mainState = ref.watch(mainController);
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-          child: Stack(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft, end: Alignment.bottomRight,
-                    colors: [
-                      Constants.kFifthColor.withOpacity(.7),
-                      Constants.kSixthColor.withOpacity(.1),
-                      Constants.kSixthColor.withOpacity(.2),
-                      Constants.kSixthColor.withOpacity(.2),
-                      Constants.kSixthColor.withOpacity(.2),
-                      Constants.kSixthColor.withOpacity(.1),
-                      Constants.kFifthColor.withOpacity(.7),
+    final language = ref.watch(languageLevelProvider);
 
-                    ]
-                  )
-                ),
-              ),
-              mainWatch.pages[mainState.bottomIndex],
-            ],
+    return Scaffold(
+      //backgroundColor: Constants.kFifthColor.withOpacity(.1),
+      body: SafeArea(
+          child: language.when(
+            loading: () => const LoadingWidget(),
+            data: (level) => level == "" ? mainState.languageLevel != "" ?
+            mainWatch.pages[mainState.bottomIndex] :
+            const LanguageLevelView()
+                : mainWatch.pages[mainState.bottomIndex],
+            error: (error, stackTrace) => const AppErrorWidget(),
           )
       ),
-      bottomNavigationBar: AppBottomBar(),
+      bottomNavigationBar:
+      language.when(
+        loading: () => null,
+        data: (level) => level == "" ? mainState.languageLevel != "" ? const AppBottomBar() :
+        null : const AppBottomBar(),
+        error: (error, stackTrace) => null
+      ),
     );
   }
 }

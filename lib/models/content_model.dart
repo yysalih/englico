@@ -11,8 +11,10 @@ class ContentModel implements BaseModel<ContentModel> {
   final String? title;
   final String? description;
   final int? point;
+  final String? level;
 
-  ContentModel({this.description, this.point, this.uid, this.image, this.title});
+
+  ContentModel({this.description, this.point, this.uid, this.image, this.title, this.level});
 
   @override
   ContentModel fromJson(Map<String, dynamic> json) =>
@@ -22,6 +24,7 @@ class ContentModel implements BaseModel<ContentModel> {
         title: json['title'] as String?,
         description: json['description'] as String?,
         point: json['point'] as int?,
+        level: json['level'] as String?,
       );
 
   @override
@@ -31,6 +34,7 @@ class ContentModel implements BaseModel<ContentModel> {
     "title": title,
     "description": description,
     "point": point,
+    "level": level,
   };
 
 }

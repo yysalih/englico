@@ -20,6 +20,8 @@ class AppBottomBar extends ConsumerWidget {
       currentIndex: mainState.bottomIndex,
       onTap: (value) => mainWatch.changePage(value),
       unselectedLabelStyle: const TextStyle(color: Colors.black),
+      showSelectedLabels: false,
+      showUnselectedLabels: false,
       items: [
         for(int i = 0; i < mainWatch.pageInfo.length; i++)
           BottomNavigationBarItem(
@@ -28,6 +30,7 @@ class AppBottomBar extends ConsumerWidget {
               color: Constants.kPrimaryColor,
             ),
             label: mainWatch.pageInfo[i]["label"],
+
           ),
       ],
 
