@@ -25,6 +25,7 @@ class LearnView extends ConsumerWidget {
     final words = ref.watch(wordsStreamProvider);
     final user = ref.watch(userStreamProvider(FirebaseAuth.instance.currentUser!.uid));
     final languageLevel = ref.watch(languageLevelProvider);
+    final mainState = ref.watch(mainController);
 
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
@@ -41,7 +42,7 @@ class LearnView extends ConsumerWidget {
               error: (error, stackTrace) => const AppErrorWidget(),
               loading: () => const LoadingWidget(),
               data: (words) {
-                final userWordList = words.where((element) => element.level == level &&
+                final userWordList = words.where((element) => (element.level == level || element.level == mainState.languageLevel) &&
                     !user.words!.contains(element.uid)).toList();
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.start,

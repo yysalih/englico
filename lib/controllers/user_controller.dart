@@ -108,6 +108,18 @@ class UserController extends StateNotifier<UserState> {
   changeActiveIndex(int index) {
     state = state.copyWith(activeIndex: index);
   }
+
+  addPointToUser(UserModel user, int point) async {
+    await FirebaseFirestore.instance.collection("users").doc(user.uid).update({
+      "point" : user.point! + point
+    });
+  }
+
+  addInUserTests(UserModel user, String testUid) async {
+    await FirebaseFirestore.instance.collection("users").doc(user.uid).update({
+      "tests" : user.tests!..add(testUid)
+    });
+  }
 }
 
 final userController = StateNotifierProvider<UserController, UserState>((ref) => UserController(UserState(

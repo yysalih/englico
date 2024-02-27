@@ -108,3 +108,26 @@ class NoPracticeWidget extends StatelessWidget {
     );
   }
 }
+
+class NoMoreTestWidget extends StatelessWidget {
+  const NoMoreTestWidget({super.key});
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset("assets/icons/done2.png", width: 150.w,),
+          SizedBox(height: 20.h,),
+          Text("Bu bölümdeki bütün testleri tamamladın.\nTebrikler!",
+            style: Constants.kTextStyle.copyWith(
+              fontWeight: FontWeight.bold, fontSize: 25.w,
+            ), textAlign: TextAlign.center,)
+        ],
+      ),
+    );
+  }
+}

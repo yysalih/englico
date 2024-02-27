@@ -1,4 +1,5 @@
 import 'package:englico/controllers/test_controller.dart';
+import 'package:englico/controllers/user_controller.dart';
 import 'package:englico/repository/content_repository.dart';
 import 'package:englico/repository/question_repository.dart';
 import 'package:englico/repository/shared_preferences_repository.dart';
@@ -20,6 +21,8 @@ class TestView extends ConsumerWidget {
     final testState = ref.watch(testController);
     final testWatch = ref.watch(testController.notifier);
 
+    final userWatch = ref.watch(userController.notifier);
+
     final contentProvider = ref.watch(contentsStreamProvider);
     final currentuser = ref.watch(userStreamProvider(FirebaseAuth.instance.currentUser!.uid));
     final languageLevel = ref.watch(languageLevelProvider);
@@ -39,82 +42,100 @@ class TestView extends ConsumerWidget {
 
                 return testsProvider.when(
                   data: (allTests) {
-                    final tests = allTests.where((element) =>
-                    !user.tests!.contains(element.uid)).toList();
+                  try {
+                     final tests = allTests.where((element) =>
+                     !user.tests!.contains(element.uid)).toList();
 
-                    final questionsProvider = ref.watch(questionsStreamProvider(
-                        "${contents.first.uid}englico${tests.first.uid}"));
+                     final questionsProvider = ref.watch(questionsStreamProvider(
+                         "${contents.first.uid}englico${tests.first.uid}"));
 
-                    return questionsProvider.when(
-                      data: (allQuestions) {
-                        print(allQuestions.first.uid);
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      foregroundColor: Colors.white, backgroundColor: Constants.kPrimaryColor,
-                                      shape: const CircleBorder(),
-                                      padding: const EdgeInsets.all(17.5)
-                                    ),
-                                    onPressed: () => Navigator.pop(context),
-                                    child: Center(child: Icon(Icons.arrow_back_ios_new, size: 15.w, color: Colors.white),),
-                                  ),
-                                  const Text("Test Et", style: Constants.kTitleTextStyle),
-                                  Container(
-                                    width: 45.w, height: 50.h,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Constants.kThirdColor,
-                                    ),
-                                    child: Center(
-                                      child: Text(contents.first.level!,
-                                        style: Constants.kTitleTextStyle.
-                                        copyWith(color: Colors.white),),
-                                    ),
-                                  ),
+                     return questionsProvider.when(
+                       data: (allQuestions) {
+                         return Column(
+                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                           children: [
+                             Padding(
+                               padding: const EdgeInsets.all(20.0),
+                               child: Row(
+                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                 children: [
+                                   ElevatedButton(
+                                     style: ElevatedButton.styleFrom(
+                                         foregroundColor: Colors.white, backgroundColor: Constants.kPrimaryColor,
+                                         shape: const CircleBorder(),
+                                         padding: const EdgeInsets.all(17.5)
+                                     ),
+                                     onPressed: () => Navigator.pop(context),
+                                     child: Center(child: Icon(Icons.arrow_back_ios_new, size: 15.w, color: Colors.white),),
+                                   ),
+                                   Text("Test Et ${tests.first.title!}", style: Constants.kTitleTextStyle),
+                                   Container(
+                                     width: 45.w, height: 50.h,
+                                     decoration: BoxDecoration(
+                                       borderRadius: BorderRadius.circular(10),
+                                       color: Constants.kThirdColor,
+                                     ),
+                                     child: Center(
+                                       child: Text(contents.first.level!,
+                                         style: Constants.kTitleTextStyle.
+                                         copyWith(color: Colors.white),),
+                                     ),
+                                   ),
 
-                                ],
-                              ),
-                            ),
-                            allQuestions.first.type != "word_match" ?
-                                CommonQuestionView(question: allQuestions.first.question!,)
-                                : Container(),
-                            Padding(
-                              padding: EdgeInsets.all(20),
-                              child: Container(
-                                width: width, height: 55.h,
-                                decoration: BoxDecoration(
-                                  color: Constants.kSecondColor,
-                                  borderRadius: BorderRadius.circular(25)
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(25),
-                                  child: MaterialButton(
-                                    onPressed: () {
+                                 ],
+                               ),
+                             ),
+                             allQuestions[testState.activeQuestionIndex].type != "word_match" ?
+                             CommonQuestionView(question: allQuestions[testState.activeQuestionIndex].question!,
+                               userModel: user, questionModel: allQuestions[testState.activeQuestionIndex],)
+                                 : Text(allQuestions[testState.activeQuestionIndex].type.toString()),
+                             Padding(
+                               padding: EdgeInsets.all(20),
+                               child: Container(
+                                 width: width, height: 55.h,
+                                 decoration: BoxDecoration(
+                                     color: Constants.kSecondColor,
+                                     borderRadius: BorderRadius.circular(25)
+                                 ),
+                                 child: ClipRRect(
+                                   borderRadius: BorderRadius.circular(25),
+                                   child: MaterialButton(
+                                     onPressed: () {
+                                       if(testState.activeQuestionIndex+1 < allQuestions.length) {
+                                         testWatch.changeActiveQuestion(testState.activeQuestionIndex+1);
+                                         testWatch.changeIsAnswered(value: false);
+                                       }
+                                       else if(testState.activeQuestionIndex+1 == allQuestions.length) {
+                                         userWatch.addInUserTests(user, tests.first.uid!);
+                                         testWatch.changeActiveQuestion(0);
+                                         testWatch.changeIsAnswered(value: false);
+                                       }
+                                       else {
+                                         testWatch.changeActiveQuestion(0);
+                                         testWatch.changeIsAnswered(value: false);
+                                       }
+                                     },
+                                     color: Constants.kSecondColor,
+                                     child: Center(
+                                       child: Text(testState.isAnswered ? "Devam Et" : "Pas Geç", style: Constants.kTitleTextStyle.copyWith(
+                                           color: Colors.white
+                                       ),),
+                                     ),
+                                   ),
+                                 ),
+                               ),
+                             ),
+                           ],
+                         );
+                       },
+                       error: (error, stackTrace) => const AppErrorWidget(),
+                       loading: () => const LoadingWidget(),
+                     );
+                   }
 
-                                    },
-                                    child: Center(
-                                      child: Text("Pas Geç", style: Constants.kTitleTextStyle.copyWith(
-                                        color: Colors.white
-                                      ),),
-                                    ),
-                                    color: Constants.kSecondColor,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                      error: (error, stackTrace) => const AppErrorWidget(),
-                      loading: () => const LoadingWidget(),
-                    );
+                   catch(E) {
+                     return NoMoreTestWidget();
+                   }
                   },
                   error: (error, stackTrace) => const AppErrorWidget(),
                   loading: () => const LoadingWidget(),

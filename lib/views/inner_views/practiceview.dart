@@ -26,6 +26,8 @@ class PracticeView extends ConsumerWidget {
     final user = ref.watch(userStreamProvider(FirebaseAuth.instance.currentUser!.uid));
     final languageLevel = ref.watch(languageLevelProvider);
 
+    final mainState = ref.watch(mainController);
+
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
@@ -41,8 +43,9 @@ class PracticeView extends ConsumerWidget {
               error: (error, stackTrace) => const AppErrorWidget(),
               loading: () => const LoadingWidget(),
               data: (words) {
-                final userWordList = words.where((element) => element.level == level &&
-                    !user.words!.contains(element.uid)).toList();
+                final userWordList = words.where((element) => (element.level == level
+                    || element.level == mainState.languageLevel) &&
+                    user.words!.contains(element.uid)).toList();
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,7 +89,7 @@ class PracticeView extends ConsumerWidget {
                       
                             cardBuilder: (context, index, a, b) {
                               if(userWordList.isEmpty) {
-                                return NoMoreWidget();
+                                return const NoMoreWidget();
                               }
                               final word = userWordList[index];
                               return Column(
