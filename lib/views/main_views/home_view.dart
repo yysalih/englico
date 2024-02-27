@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:englico/controllers/main_controller.dart';
+import 'package:englico/controllers/test_controller.dart';
 import 'package:englico/repository/user_repository.dart';
 import 'package:englico/utils/contants.dart';
 import 'package:englico/views/inner_views/learn_view.dart';
@@ -21,6 +22,7 @@ class HomeView extends ConsumerWidget {
 
     final user = ref.watch(userStreamProvider(FirebaseAuth.instance.currentUser!.uid));
     final mainWatch = ref.watch(mainController.notifier);
+    final testWatch = ref.watch(testController.notifier);
 
     return user.when(
       loading: () => const LoadingWidget(),
@@ -71,7 +73,10 @@ class HomeView extends ConsumerWidget {
                         title: "Öğren", icon: "learn"),
 
                     HomeViewWidget(
-                        onPressed: () => Navigator.push(context, mainWatch.routeToSignInScreen(const TestView())),
+                        onPressed: () {
+                          testWatch.changePoint(value: 0);
+                          Navigator.push(context, mainWatch.routeToSignInScreen(const TestView()));
+                        },
 
                         title: "Test Et", icon: "multiple_choice"),
                   ],

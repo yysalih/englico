@@ -52,6 +52,7 @@ class CommonQuestionView extends ConsumerWidget {
                     onPressed: () {
                       testWatch.changeIsAnswered(value: true);
                       if(question["answers"][i] == question["answer"]) {
+                        testWatch.changePoint(value: testState.point + questionModel.point!);
                         userWatch.addPointToUser(userModel, questionModel.point!);
                       }
                     },

@@ -120,6 +120,12 @@ class UserController extends StateNotifier<UserState> {
       "tests" : user.tests!..add(testUid)
     });
   }
+
+  addInUserContents(UserModel user, String contentUid) async {
+    await FirebaseFirestore.instance.collection("users").doc(user.uid).update({
+      "contents" : user.contents!..add(contentUid)
+    });
+  }
 }
 
 final userController = StateNotifierProvider<UserController, UserState>((ref) => UserController(UserState(
