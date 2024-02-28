@@ -1,6 +1,7 @@
 import 'package:englico/controllers/main_controller.dart';
 import 'package:englico/controllers/test_controller.dart';
 import 'package:englico/controllers/user_controller.dart';
+import 'package:englico/models/question_models/word_match_model.dart';
 import 'package:englico/repository/content_repository.dart';
 import 'package:englico/repository/question_repository.dart';
 import 'package:englico/repository/shared_preferences_repository.dart';
@@ -9,6 +10,7 @@ import 'package:englico/repository/user_repository.dart';
 import 'package:englico/views/info_views/show_progress_view.dart';
 import 'package:englico/views/main_view.dart';
 import 'package:englico/views/question_views/common_question_view.dart';
+import 'package:englico/views/question_views/word_match_view.dart';
 import 'package:englico/widgets/status_widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -79,7 +81,7 @@ class TestView extends ConsumerWidget {
                                             testWatch.changeIsAnswered(value: false);
                                             testWatch.changeActiveQuestion(0);
                                             Navigator.pushAndRemoveUntil(context,
-                                              mainWatch.routeToSignInScreen(ShowProgressView()), (route) => false,);
+                                              mainWatch.routeToSignInScreen(const ShowProgressView()), (route) => false,);
                                           },),),
                                       child: Center(child: Icon(Icons.arrow_back_ios_new, size: 15.w, color: Colors.white),),
                                     ),
@@ -112,9 +114,12 @@ class TestView extends ConsumerWidget {
                               allQuestions[testState.activeQuestionIndex].type != "word_match" ?
                               CommonQuestionView(question: allQuestions[testState.activeQuestionIndex].question!,
                                 userModel: user, questionModel: allQuestions[testState.activeQuestionIndex],)
-                                  : Text(allQuestions[testState.activeQuestionIndex].type.toString()),
+                                  : WordMatchView(wordMatchModel: WordMatchModel().fromJson(
+                                  allQuestions[testState.activeQuestionIndex].question!
+                              )),
+                              //Text(allQuestions[testState.activeQuestionIndex].type.toString()),
                               Padding(
-                                padding: EdgeInsets.all(20),
+                                padding: const EdgeInsets.all(20),
                                 child: Container(
                                   width: width, height: 55.h,
                                   decoration: BoxDecoration(
@@ -175,7 +180,7 @@ class TestView extends ConsumerWidget {
                   return NoMoreTestWidget(
                     level: level!,
                     onPressed: () => Navigator.pushAndRemoveUntil(context,
-                      mainWatch.routeToSignInScreen(MainView()), (route) => false),);
+                      mainWatch.routeToSignInScreen(const MainView()), (route) => false),);
                 }
               },
               error: (error, stackTrace) => const AppErrorWidget(),

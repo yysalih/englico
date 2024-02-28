@@ -57,6 +57,8 @@ class ShowProgressView extends ConsumerWidget {
                   ),
                   onPressed: () {
                     testWatch.changePoint(value: 0);
+                    testWatch.resetAll();
+                    testWatch.addInCorrectedKeysValues("",removeAll: true);
                     Navigator.pushAndRemoveUntil(context, mainWatch.routeToSignInScreen(MainView()),
                             (route) => false);
                   },

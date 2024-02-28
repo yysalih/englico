@@ -15,7 +15,7 @@ class AppErrorWidget extends StatelessWidget {
         children: [
           Image.asset("assets/icons/warning.png", width: 100.w,),
           SizedBox(height: 10.h,),
-          Text("Yükleme sırasında bir hata oluştu. Lütfen sayfayı yenileyiniz.",
+          const Text("Yükleme sırasında bir hata oluştu. Lütfen sayfayı yenileyiniz.",
             style: Constants.kTextStyle,)
         ],
       ),
@@ -33,9 +33,9 @@ class LoadingWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Center(child: CircularProgressIndicator(),),
+          const Center(child: CircularProgressIndicator(),),
           SizedBox(height: 10.h,),
-          Text("Yükleniyor...",
+          const Text("Yükleniyor...",
             style: Constants.kTextStyle,)
         ],
       ),
@@ -55,7 +55,7 @@ class NotFoundWidget extends StatelessWidget {
         children: [
           Image.asset("assets/gifs/notfound.gif", width: 200.w,),
           SizedBox(height: 10.h,),
-          Text("Herhangi bir öge bulunamadı...",
+          const Text("Herhangi bir öge bulunamadı...",
             style: Constants.kTextStyle,)
         ],
       ),
@@ -132,7 +132,7 @@ class NoMoreTestWidget extends StatelessWidget {
           SizedBox(height: 20.h,),
           TextButton(
             onPressed: onPressed,
-            child: Text("Ana Sayfaya Dön", style: Constants.kTextStyle,),
+            child: const Text("Ana Sayfaya Dön", style: Constants.kTextStyle,),
           )
         ],
       ),
@@ -166,12 +166,12 @@ class CustomAlertDialog extends StatelessWidget {
       ),
       actions: [
         TextButton(
-          child: Text("Hayır", style: Constants.kTextStyle,),
+          child: const Text("Hayır", style: Constants.kTextStyle,),
           onPressed: () => Navigator.pop(context),
         ),
         TextButton(
           onPressed: onPressed,
-          child: Text("Evet", style: Constants.kTextStyle,),
+          child: const Text("Evet", style: Constants.kTextStyle,),
         )
       ],
     );

@@ -42,7 +42,7 @@ flutter:
 
   assets:
     - assets/icons/
-    - assets/icons/information.png
+    - assets/icons/star.png
     - assets/ui/
     - assets/gifs/
     - assets/ills/
