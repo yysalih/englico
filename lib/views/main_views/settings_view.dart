@@ -4,6 +4,7 @@ import 'package:englico/controllers/settings_controller.dart';
 import 'package:englico/controllers/user_controller.dart';
 import 'package:englico/repository/user_repository.dart';
 import 'package:englico/utils/contants.dart';
+import 'package:englico/views/main_view.dart';
 import 'package:englico/widgets/status_widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -48,9 +49,15 @@ class SettingsView extends ConsumerWidget {
             for(int i = 0; i < settingsWatch.settingsWidgets.length; i++)
               MaterialButton(
                 onPressed: () async {
-                  await userWatch.logout(context);
-                  Navigator.pushAndRemoveUntil(context, mainWatch.routeToSignInScreen(AuthView()), (route) => false);
+                  if(settingsWatch.settingsWidgets[i]["icon"] == "logout") {
+                    await userWatch.logout(context);
+                    Navigator.pushAndRemoveUntil(context, mainWatch.routeToSignInScreen(AuthView()), (route) => false);
+                  }
 
+                  else if(settingsWatch.settingsWidgets[i]["icon"] == "language") {
+                    mainWatch.setLanguageLevel("");
+                    Navigator.pushAndRemoveUntil(context, mainWatch.routeToSignInScreen(const MainView()), (route) => false);
+                  }
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -77,8 +84,8 @@ class SettingsView extends ConsumerWidget {
               )
           ],
         ),
-        error: (error, stackTrace) => AppErrorWidget(),
-        loading: () => Center(child: LoadingWidget()),
+        error: (error, stackTrace) => const AppErrorWidget(),
+        loading: () => const Center(child: LoadingWidget()),
       ),
     );
   }

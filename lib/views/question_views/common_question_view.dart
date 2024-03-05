@@ -37,38 +37,65 @@ class CommonQuestionView extends ConsumerWidget {
             style: Constants.kTitleTextStyle.copyWith(color: Colors.black),),
           SizedBox(height: 10.h),
           for(int i = 0; i < (question["answers"] as List).length; i++)
-            Padding(
-              padding: EdgeInsets.only(top: 10.h),
-              child: Container(
-                width: width, height: 55.h,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                  boxShadow: [BoxShadow(color: Colors.grey.shade300, blurRadius: 1, spreadRadius: 1)]
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: MaterialButton(
-                    onPressed: () {
-                      testWatch.changeIsAnswered(value: true);
-                      if(question["answers"][i] == question["answer"]) {
-                        testWatch.changePoint(value: testState.point + questionModel.point!);
-                        userWatch.addPointToUser(userModel, questionModel.point!);
-                      }
-                    },
-                    child: Center(
-                      child: Text(question["answers"][i], style: Constants.kTitleTextStyle.copyWith(
-                          color: testState.isAnswered ? Colors.white : Colors.black
-                      ),),
-                    ),
-                    color: testState.isAnswered ? question["answers"][i] == question["answer"]
-                        ? Colors.green
-                        : Colors.redAccent : Colors.white,
-                  ),
-                ),
-              ),
-            ),
+            AnswerWidget(
+                question: question, i: i, questionModel: questionModel, userModel: userModel),
         ],
+      ),
+    );
+  }
+}
+
+class AnswerWidget extends ConsumerWidget {
+  const AnswerWidget({
+    super.key,
+    required this.question,
+    required this.i,
+    required this.questionModel,
+    required this.userModel,
+  });
+
+  final Map<String, dynamic> question;
+  final int i;
+  final QuestionModel questionModel;
+  final UserModel userModel;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final width = MediaQuery.of(context).size.width;
+    final testState = ref.watch(testController);
+    final testWatch = ref.watch(testController.notifier);
+
+    final userWatch = ref.watch(userController.notifier);
+
+    return Padding(
+      padding: EdgeInsets.only(top: 10.h),
+      child: Container(
+        width: width, height: 55.h,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+          boxShadow: [BoxShadow(color: Colors.grey.shade300, blurRadius: 1, spreadRadius: 1)]
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: MaterialButton(
+            onPressed: () {
+              testWatch.changeIsAnswered(value: true);
+              if(question["answers"][i] == question["answer"]) {
+                testWatch.changePoint(value: testState.point + questionModel.point!);
+                userWatch.addPointToUser(userModel, questionModel.point!);
+              }
+            },
+            child: Center(
+              child: Text(question["answers"][i], style: Constants.kTitleTextStyle.copyWith(
+                  color: testState.isAnswered ? Colors.white : Colors.black
+              ),),
+            ),
+            color: testState.isAnswered ? question["answers"][i] == question["answer"]
+                ? Colors.green
+                : Colors.redAccent : Colors.white,
+          ),
+        ),
       ),
     );
   }

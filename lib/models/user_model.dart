@@ -14,12 +14,15 @@ class UserModel implements BaseModel<UserModel> {
   final int? point;
   final int? subscriptionDate;
   final List? words;
+  final List? savedWords;
   final List? tests;
   final List? contents;
 
   UserModel({this.uid, this.name, this.image,
     this.subscriptionDate, this.words, this.tests,
-    this.email, this.token, this.point, this.contents});
+    this.email, this.token, this.point, this.contents,
+    this.savedWords
+  });
 
   @override
   UserModel fromJson(Map<String, dynamic> json) => UserModel(
@@ -33,6 +36,7 @@ class UserModel implements BaseModel<UserModel> {
     words: json["words"] as List?,
     tests: json["tests"] as List?,
     contents: json["contents"] as List?,
+    savedWords: json["saved_words"] as List?,
   );
 
   @override
@@ -47,6 +51,7 @@ class UserModel implements BaseModel<UserModel> {
     "words": words,
     "tests": tests,
     "contents": contents,
+    "savedWords": savedWords,
   };
 
 }

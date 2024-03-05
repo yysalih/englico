@@ -1,4 +1,5 @@
 import 'package:englico/controllers/test_controller.dart';
+import 'package:englico/controllers/user_controller.dart';
 import 'package:englico/models/question_models/word_match_model.dart';
 import 'package:englico/utils/contants.dart';
 import 'package:englico/widgets/status_widgets.dart';
@@ -6,16 +7,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../models/content_model.dart';
+import '../../models/question_model.dart';
+import '../../models/test_model.dart';
+import '../../models/user_model.dart';
+
 class WordMatchView extends ConsumerWidget {
   final WordMatchModel wordMatchModel;
-  const WordMatchView({super.key,
+  final List<QuestionModel> allQuestions;
+  final List<ContentModel> contents;
+  final UserModel user;
+  final List<TestModel> tests;
+
+  const WordMatchView({
+    super.key,
     required this.wordMatchModel,
+    required this.allQuestions,
+    required this.user,
+    required this.tests,
+    required this.contents
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
     final testWatch = ref.watch(testController.notifier);
+    final userWatch = ref.watch(userController.notifier);
     final testState = ref.watch(testController);
 
     final keys = wordMatchModel.words!.keys.toList().where((element) => !testState.correctKeys.contains(element)).toList();
@@ -105,6 +122,18 @@ class WordMatchView extends ConsumerWidget {
                           child: MaterialButton(
                             color: testState.value == values[i] ? testState.selectedValueColor : Colors.white,
                             onPressed: () {
+                              if(keys.isEmpty) {
+                                testWatch.changeIsAnswered(value: true);
+                                testWatch.continueButton(
+                                    allQuestions: allQuestions,
+                                    contents: contents,
+                                    tests: tests,
+                                    user: user,
+                                    userWatch: userWatch
+                                );
+
+                              }
+
                               if(testState.key.isNotEmpty) {
                                 testWatch.changeKeyOrValue(values[i], isKey: false);
                                 if(testState.value.isEmpty) {
@@ -113,32 +142,28 @@ class WordMatchView extends ConsumerWidget {
                                 else {
                                   testWatch.changeKeyOrValue("", isKey: false);
                                 }
-                                Future.delayed(const Duration(milliseconds: 50), () {
+                                Future.delayed(const Duration(milliseconds: 75), () {
                                   final testState = ref.read(testController);
 
                                   if(wordMatchModel.words![testState.key] != testState.value) {
                                     testWatch.changeSelectedColor(Colors.redAccent, isKey: true);
                                     testWatch.changeSelectedColor(Colors.redAccent, isKey: false);
 
-                                    Future.delayed(const Duration(milliseconds: 50), () {
+                                    Future.delayed(const Duration(milliseconds: 75), () {
                                       testWatch.resetAll();
                                     },);
                                   }
                                   else {
                                     testWatch.changeSelectedColor(Colors.green, isKey: true);
                                     testWatch.changeSelectedColor(Colors.green, isKey: false);
-                                    Future.delayed(const Duration(milliseconds: 50), () {
+                                    Future.delayed(const Duration(milliseconds: 75), () {
                                       testWatch.addInCorrectedKeysValues(testState.key);
                                       testWatch.addInCorrectedKeysValues(testState.value, isKey: false);
-                                      if(keys.length == 0) {
-                                        final testRead = ref.read(testController.notifier);
-                                        testRead.changeIsAnswered(value: true);
-                                        debugPrint("Is Answered: ${testState.isAnswered}");
 
-                                      }
                                       testWatch.resetAll();
                                     },);
                                   }
+
 
                                 },);
 

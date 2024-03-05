@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 
 class Constants {
   static const appName = "Englico";
@@ -10,6 +10,9 @@ class Constants {
   static const Color kFourthColor = Color(0xFFD7638A);
   static const Color kFifthColor = Color(0xFFF09290);
   static const Color kSixthColor = Color(0xFFF7C6A3);
+
+  static const Color kBlackColor = Color(0xFF35374B);
+
 
   static const InputDecoration kInputDecorationWithNoBorder = InputDecoration(
     border: InputBorder.none,

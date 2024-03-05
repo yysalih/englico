@@ -1,3 +1,5 @@
+import 'package:englico/controllers/main_controller.dart';
+import 'package:englico/controllers/speak_controller.dart';
 import 'package:englico/utils/contants.dart';
 import 'package:englico/views/auth_view.dart';
 import 'package:englico/views/main_view.dart';
@@ -18,8 +20,23 @@ void main() async {
   runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
+
+  @override
+  ConsumerState<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends ConsumerState<MyApp> {
+
+  @override
+  void initState() {
+    final mainRead = ref.read(mainController.notifier);
+    final speakRead = ref.read(speakController.notifier);
+    mainRead.configureTts();
+    speakRead.initSpeech();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

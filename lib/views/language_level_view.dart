@@ -6,7 +6,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../utils/contants.dart';
 
 class LanguageLevelView extends ConsumerWidget {
-  const LanguageLevelView({super.key});
+  final bool fromSettings;
+  const LanguageLevelView({super.key, this.fromSettings = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

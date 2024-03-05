@@ -1,4 +1,5 @@
 import 'package:englico/controllers/main_controller.dart';
+import 'package:englico/controllers/speak_controller.dart';
 import 'package:englico/controllers/user_controller.dart';
 import 'package:englico/repository/shared_preferences_repository.dart';
 import 'package:englico/repository/user_repository.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../models/user_model.dart';
 import '../../widgets/custom_button.dart';
@@ -25,6 +27,11 @@ class SpeakView extends ConsumerWidget {
     final words = ref.watch(wordsStreamProvider);
     final user = ref.watch(userStreamProvider(FirebaseAuth.instance.currentUser!.uid));
     final languageLevel = ref.watch(languageLevelProvider);
+
+    final mainWatch = ref.watch(mainController.notifier);
+    final speakWatch = ref.watch(speakController.notifier);
+    final speakState = ref.watch(speakController);
+
 
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
@@ -48,11 +55,12 @@ class SpeakView extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0, left: 8),
-                          child: ElevatedButton(
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0, left: 8, right: 10,),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.white, backgroundColor: Constants.kPrimaryColor,
                               shape: const CircleBorder(),
@@ -60,8 +68,9 @@ class SpeakView extends ConsumerWidget {
                             onPressed: () => Navigator.pop(context),
                             child: Center(child: Icon(Icons.arrow_back_ios_new, size: 15.w, color: Colors.white),),
                           ),
-                        ),
-                      ],
+                          Image.asset("assets/icons/speak.png", width: 30.w),
+                        ],
+                      ),
                     ),
                     Expanded(
                       child: Padding(
@@ -129,28 +138,31 @@ class SpeakView extends ConsumerWidget {
                                                     ),
                                                   ),
                                                   Image.asset("assets/icons/speak.png", width: 40.w,),
-                                                  Container(
-                                                    width: 45.w, height: 50.h,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.circular(10),
-                                                      color: Constants.kPrimaryColor,
-                                                    ),
-                                                    child: const Center(
-                                                        child: Icon(Icons.audiotrack, color: Colors.white,)
+                                                  GestureDetector(
+                                                    onTap: () => mainWatch.speakText(userWordList[index].english!.toString()),
+                                                    child: Container(
+                                                      width: 50, height: 50,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(10),
+                                                        color: Constants.kPrimaryColor,
+                                                      ),
+                                                      child: const Center(
+                                                          child: Icon(Icons.audiotrack, color: Colors.white,)
+                                                      ),
                                                     ),
                                                   ),
                                                 ],
                                               ),
                                               Container(
-                                                width: width * .7, height: 1,
+                                                width: width * .5, height: .5,
                                                 color: Constants.kPrimaryColor.withOpacity(.2),
                                               ),
                                               Text(userWordList[index].english!.toString(),
                                                 style: Constants.kTitleTextStyle.copyWith(
-                                                  fontSize: 40.w
+                                                  fontSize: 35.w
                                                 ),),
                                               Container(
-                                                width: width * .7, height: 1,
+                                                width: width * .5, height: .5,
                                                 color: Constants.kPrimaryColor.withOpacity(.2),
                                               ),
                                               Container(
@@ -163,39 +175,47 @@ class SpeakView extends ConsumerWidget {
                                                 ),
                                                 child: Padding(
                                                   padding: const EdgeInsets.all(10.0),
-                                                  child: RichText(
-                                                    textAlign: TextAlign.center,
+                                                  child: GestureDetector(
+                                                    onTap: () async {
+                                                      await Permission.microphone.request();
+                                                    },
+                                                    child: RichText(
+                                                      textAlign: TextAlign.center,
 
-                                                    text: TextSpan(
+                                                      text: TextSpan(
 
-                                                      children: [
-                                                        TextSpan(
-                                                          text: "Senin söylediğin kelime:\n",
-                                                          style: Constants.kTextStyle
-                                                              .copyWith(color: Constants.kSecondColor,
-                                                              fontWeight: FontWeight.bold, fontSize: 20.w),
+                                                        children: [
+                                                          TextSpan(
+                                                            text: "Senin söylediğin kelime:\n",
+                                                            style: Constants.kTextStyle
+                                                                .copyWith(color: Constants.kSecondColor,
+                                                                fontWeight: FontWeight.bold, fontSize: 18.w),
 
-                                                        ),
-                                                        TextSpan(
-                                                            text: userWordList[index].turkishSentence.toString(),
-                                                            style: Constants.kTextStyle.copyWith(
-                                                                color: Colors.black, fontSize: 20.w
-                                                            )
-                                                        ),
-                                                      ]
+                                                          ),
+                                                          TextSpan(
+                                                              text: speakWatch.speechToText.isListening
+                                                                ? speakState.lastWords : speakState.speechEnabled
+                                                                ? 'Konuşmak için mikrofona tıklayınız...'
+                                                                    : 'Mikrofona izin vermek için tıklayınız',
+                                                              style: Constants.kTextStyle.copyWith(
+                                                                  color: Colors.black, fontSize: 16.w
+                                                              )
+                                                          ),
+                                                        ]
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
                                               ),
                                               Container(
-                                                width: width * .7, height: 1,
+                                                width: width * .5, height: .5,
                                                 color: Constants.kPrimaryColor.withOpacity(.2),
                                               ),
                                               Text(
                                                 "Mikrofona basarak konuşmaya başlayabilirsin",
                                                 style: Constants.kTextStyle
                                                     .copyWith(color: Colors.black,
-                                                    fontSize: 17.5.w,),
+                                                    fontSize: 15.w,),
                                                 textAlign: TextAlign.center,
                                               ),
                                             ],
@@ -225,6 +245,8 @@ class SpeakView extends ConsumerWidget {
 
   bottomButtons(double width, double height, BuildContext context,
       WidgetRef ref, String wordUid, UserModel userModel) {
+    final speakWatch = ref.watch(speakController.notifier);
+    final speakState = ref.watch(speakController);
     final userRead = ref.read(userController.notifier);
     return Container(
       width: width, height: height * .15,
@@ -242,10 +264,9 @@ class SpeakView extends ConsumerWidget {
               _cardSwiperController.swipe(CardSwiperDirection.left);},
             ),
             CustomButton(
-              color: Constants.kPrimaryColor, iconColor: Colors.white, icon: Icons.mic,
-              onTap: () async {
-                _cardSwiperController.swipe(CardSwiperDirection.right);
-              },
+              color: Constants.kPrimaryColor, iconColor: Colors.white,
+              icon: speakWatch.speechToText.isNotListening ? Icons.mic_off : Icons.mic,
+              onTap: speakWatch.speechToText.isNotListening ? speakWatch.startListening : speakWatch.stopListening,
             ),
           ],
         ),

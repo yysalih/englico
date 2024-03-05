@@ -114,9 +114,14 @@ class TestView extends ConsumerWidget {
                               allQuestions[testState.activeQuestionIndex].type != "word_match" ?
                               CommonQuestionView(question: allQuestions[testState.activeQuestionIndex].question!,
                                 userModel: user, questionModel: allQuestions[testState.activeQuestionIndex],)
-                                  : WordMatchView(wordMatchModel: WordMatchModel().fromJson(
+                                  : WordMatchView(wordMatchModel: const WordMatchModel().fromJson(
                                   allQuestions[testState.activeQuestionIndex].question!
-                              )),
+                                ),
+                                allQuestions: allQuestions,
+                                contents: contents,
+                                tests: tests,
+                                user: user,
+                              ),
                               //Text(allQuestions[testState.activeQuestionIndex].type.toString()),
                               Padding(
                                 padding: const EdgeInsets.all(20),
@@ -124,34 +129,19 @@ class TestView extends ConsumerWidget {
                                   width: width, height: 55.h,
                                   decoration: BoxDecoration(
                                       color: Constants.kSecondColor,
-                                      borderRadius: BorderRadius.circular(25)
+                                      borderRadius: BorderRadius.circular(50)
                                   ),
                                   child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(25),
+                                    borderRadius: BorderRadius.circular(50),
                                     child: MaterialButton(
                                       onPressed: () {
-
-                                        if(testState.activeQuestionIndex+1 < allQuestions.length) {
-                                          testWatch.changeActiveQuestion(testState.activeQuestionIndex+1);
-                                          testWatch.changeIsAnswered(value: false);
-                                        }
-                                        else if(testState.activeQuestionIndex+1 == allQuestions.length) {
-
-                                          userWatch.addInUserTests(user, tests.first.uid!);
-
-                                          debugPrint("Tests Length: ${tests.length}");
-
-                                          if(tests.length == 1) {
-                                            if(user.point! >= contents.first.point!) {
-                                              userWatch.addInUserContents(user, contents.first.uid!);
-                                            }
-                                          }
-
-                                          else {
-                                            testWatch.changeActiveQuestion(0);
-                                            testWatch.changeIsAnswered(value: false);
-                                          }
-                                        }
+                                        testWatch.continueButton(
+                                          allQuestions: allQuestions,
+                                          contents: contents,
+                                          tests: tests,
+                                          user: user,
+                                          userWatch: userWatch
+                                        );
                                       },
                                       color: Constants.kSecondColor,
                                       child: Center(

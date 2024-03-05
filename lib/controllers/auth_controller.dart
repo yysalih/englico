@@ -119,6 +119,7 @@ class AuthController extends StateNotifier<AuthState> {
       email: _user.email.toString(),
       name: _user.displayName.toString().isEmpty ? _user.email.toString().split("@").first : _user.displayName.toString(),
       point: 0,
+      savedWords: []
     );
 
     await FirebaseFirestore.instance.collection("users").doc(userModel.uid)

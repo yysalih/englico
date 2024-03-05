@@ -1,5 +1,6 @@
 import 'package:englico/controllers/main_controller.dart';
 import 'package:englico/controllers/user_controller.dart';
+import 'package:englico/models/word_model.dart';
 import 'package:englico/repository/shared_preferences_repository.dart';
 import 'package:englico/repository/user_repository.dart';
 import 'package:englico/repository/word_repository.dart';
@@ -13,6 +14,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 
 import '../../models/user_model.dart';
+import '../../widgets/word_card_widget.dart';
 
 class PracticeView extends ConsumerWidget {
   PracticeView({super.key});
@@ -27,6 +29,7 @@ class PracticeView extends ConsumerWidget {
     final languageLevel = ref.watch(languageLevelProvider);
 
     final mainState = ref.watch(mainController);
+    final mainWatch = ref.watch(mainController.notifier);
 
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
@@ -50,11 +53,12 @@ class PracticeView extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0, left: 8),
-                          child: ElevatedButton(
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0, left: 8, right: 10,),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.white, backgroundColor: Constants.kPrimaryColor,
                               shape: const CircleBorder(),
@@ -62,8 +66,9 @@ class PracticeView extends ConsumerWidget {
                             onPressed: () => Navigator.pop(context),
                             child: Center(child: Icon(Icons.arrow_back_ios_new, size: 15.w, color: Colors.white),),
                           ),
-                        ),
-                      ],
+                          Image.asset("assets/icons/practice.png", width: 40.w),
+                        ],
+                      ),
                     ),
                     Expanded(
                       child: Padding(
@@ -94,105 +99,9 @@ class PracticeView extends ConsumerWidget {
                               final word = userWordList[index];
                               return Column(
                                 children: [
-                                  ClipRRect(
-                                      borderRadius: BorderRadius.circular(32),
-                                      child: Container(
-                                        width: width, height: height * .65,
-                                        decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            begin: Alignment.topLeft, end: Alignment.bottomRight,
-                                            colors: [
-                                              for(int i = 0; i < 4; i++)
-                                                Constants.kSixthColor.withOpacity(
-                                                    [.3, 0.2, 0.1, 0.1][i]
-                                                )
-                                            ]
-                      
-                                          )
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(20.0),
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                children: [
-                                                  Container(
-                                                    width: 45.w, height: 50.h,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.circular(10),
-                                                      color: Constants.kThirdColor,
-                                                    ),
-                                                    child: Center(
-                                                      child: Text(userWordList[index].level!,
-                                                        style: Constants.kTitleTextStyle.
-                                                        copyWith(color: Colors.white),),
-                                                    ),
-                                                  ),
-                                                  Image.asset("assets/icons/practice.png", width: 40.w,),
-                                                  Container(
-                                                    width: 45.w, height: 50.h,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.circular(10),
-                                                      color: Constants.kPrimaryColor,
-                                                    ),
-                                                    child: const Center(
-                                                      child: Icon(Icons.audiotrack, color: Colors.white,)
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              Container(
-                                                width: width * .7, height: 1,
-                                                color: Constants.kPrimaryColor.withOpacity(.2),
-                                              ),
-                                              Text(userWordList[index].english!.toString(),
-                                                style: Constants.kTitleTextStyle.copyWith(
-                                                  fontSize: 40.w
-                                                ),),
-                                              Container(
-                                                width: width * .7, height: 1,
-                                                color: Constants.kPrimaryColor.withOpacity(.2),
-                                              ),
-                                              Text(userWordList[index].turkish.toString(),
-                                                style: Constants.kTitleTextStyle.copyWith(
-                                                    fontSize: 30.w, fontWeight: FontWeight.normal,
-                      
-                                                ),),
-                                              Container(
-                                                width: width * .7, height: 1,
-                                                color: Constants.kPrimaryColor.withOpacity(.2),
-                                              ),
-                                              RichText(
-                                                textAlign: TextAlign.center,
-                      
-                                                text: TextSpan(
-                      
-                                                  children: [
-                                                    TextSpan(
-                                                      text: "${userWordList[index].englishSentence.toString()}\n",
-                                                      style: Constants.kTextStyle
-                                                          .copyWith(color: Constants.kSecondColor,
-                                                          fontWeight: FontWeight.bold, fontSize: 20.w),
-                      
-                                                    ),
-                                                    TextSpan(
-                                                        text: userWordList[index].turkishSentence.toString(),
-                                                        style: Constants.kTextStyle.copyWith(
-                                                            color: Colors.black, fontSize: 20.w
-                                                        )
-                                                    ),
-                                                  ]
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                  ),
+                                  WordCardWidget(word: userWordList[index], user: user),
                                   SizedBox(height: 20.h,),
-                                  bottomButtons(width, height, context, ref, word.uid!, user)
+                                  bottomButtons(width, height, context, ref, word, user)
                                 ],
                               );
                             },
@@ -211,8 +120,10 @@ class PracticeView extends ConsumerWidget {
     );
   }
 
-  bottomButtons(double width, double height, BuildContext context, WidgetRef ref, String wordUid, UserModel userModel) {
-    final userRead = ref.read(userController.notifier);
+  bottomButtons(double width, double height, BuildContext context, WidgetRef ref,
+      WordModel word, UserModel userModel) {
+    final mainWatch = ref.watch(mainController.notifier);
+
     return Container(
       width: width, height: height * .15,
       decoration: BoxDecoration(
@@ -232,7 +143,7 @@ class PracticeView extends ConsumerWidget {
               color: Constants.kPrimaryColor, iconColor: Colors.white, icon: Icons.thumb_up_alt_outlined,
               onTap: () async {
                 //await userRead.addWordInUserWords(wordUid, userModel);
-
+                mainWatch.speakText(word.english!);
                 _cardSwiperController.swipe(CardSwiperDirection.right);
               },
             ),

@@ -1,8 +1,10 @@
 import 'package:englico/views/main_views/home_view.dart';
+import 'package:englico/views/main_views/saved_words_view.dart';
 import 'package:englico/views/main_views/settings_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 enum languageLevels {A1, A2, B1, B2, C1}
 
@@ -23,6 +25,9 @@ class MainState {
 class MainController extends StateNotifier<MainState> {
   MainController(super.state);
 
+  FlutterTts flutterTts = FlutterTts();
+
+
   List<Map<String, dynamic>> languageLevels = [
     {"level" : "A1", "title" : "A1 Basic", "description" : "Temel İngilizce anlama ve kullanma becerilerine sahibim"},
     {"level" : "A2", "title" : "A2 Elemantary", "description" : "Günlük konularda basit İngilizce konuşabilirim"},
@@ -41,11 +46,25 @@ class MainController extends StateNotifier<MainState> {
 
   final PageController pageController = PageController(initialPage: 0);
 
-  final List<Widget> pages = [HomeView(), Container(), Container(), Container(), const SettingsView()];
+  final List<Widget> pages = [const HomeView(), Container(), Container(), const SavedWordsView(), const SettingsView()];
 
   changePage(int index) {
     state = state.copyWith(bottomIndex: index);
 
+  }
+
+  Future<void> configureTts() async {
+    await flutterTts.setLanguage('en-US');
+    await flutterTts.setSpeechRate(0.75);
+    await flutterTts.setVolume(1.25);
+  }
+
+  void speakText(String text) async {
+    await flutterTts.speak(text);
+  }
+
+  void stopSpeaking() async {
+    await flutterTts.stop();
   }
 
   Route routeToSignInScreen(Widget widget) {

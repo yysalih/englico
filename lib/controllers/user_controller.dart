@@ -126,6 +126,25 @@ class UserController extends StateNotifier<UserState> {
       "contents" : user.contents!..add(contentUid)
     });
   }
+
+  addInUserSavedWords(UserModel user, String wordUid) async {
+    debugPrint("here");
+    if(user.savedWords!.contains(wordUid)) {
+      debugPrint("here if");
+
+      await FirebaseFirestore.instance.collection("users").doc(user.uid).update({
+        "saved_words" : user.savedWords!..remove(wordUid)
+      });
+    }
+    else {
+      debugPrint("here else");
+
+      await FirebaseFirestore.instance.collection("users").doc(user.uid).update({
+        "saved_words" : user.savedWords!..add(wordUid)
+      });
+    }
+
+  }
 }
 
 final userController = StateNotifierProvider<UserController, UserState>((ref) => UserController(UserState(

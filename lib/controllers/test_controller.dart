@@ -1,7 +1,13 @@
+import 'package:englico/controllers/user_controller.dart';
+import 'package:englico/models/content_model.dart';
 import 'package:englico/models/question_models/word_match_model.dart';
+import 'package:englico/models/user_model.dart';
 import 'package:englico/utils/contants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../models/question_model.dart';
+import '../models/test_model.dart';
 
 class TestState {
   final int activeQuestionIndex;
@@ -120,6 +126,36 @@ class TestController extends StateNotifier<TestState> {
 
     }
 
+  }
+
+  continueButton({
+    required List<QuestionModel> allQuestions,
+    required UserModel user,
+    required List<TestModel> tests,
+    required UserController userWatch,
+    required List<ContentModel> contents,
+  }) {
+    if(state.activeQuestionIndex+1 < allQuestions.length) {
+      changeActiveQuestion(state.activeQuestionIndex+1);
+      changeIsAnswered(value: false);
+    }
+    else if(state.activeQuestionIndex+1 == allQuestions.length) {
+
+      userWatch.addInUserTests(user, tests.first.uid!);
+
+      debugPrint("Tests Length: ${tests.length}");
+
+      if(tests.length == 1) {
+        if(user.point! >= contents.first.point!) {
+          userWatch.addInUserContents(user, contents.first.uid!);
+        }
+      }
+
+      else {
+        changeActiveQuestion(0);
+        changeIsAnswered(value: false);
+      }
+    }
   }
 }
 

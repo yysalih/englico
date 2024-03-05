@@ -15,6 +15,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../main_view.dart';
+
 class HomeView extends ConsumerWidget {
   const HomeView({super.key});
 
@@ -23,6 +25,7 @@ class HomeView extends ConsumerWidget {
 
     final user = ref.watch(userStreamProvider(FirebaseAuth.instance.currentUser!.uid));
     final mainWatch = ref.watch(mainController.notifier);
+    final mainState = ref.watch(mainController);
     final testWatch = ref.watch(testController.notifier);
 
     final languageLevel = ref.watch(languageLevelProvider);
@@ -36,73 +39,72 @@ class HomeView extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(text: "Hoşgeldin\n", style: Constants.kTitleTextStyle.copyWith(
-                            fontSize: 50.w, color: Constants.kSecondColor,)),
-                          TextSpan(text: user.name!, style: Constants.kTextStyle.copyWith(
-                            fontSize: 20.w, color: Colors.black
-                          ))
-                        ],
-                      ),
-                    ),
-                    languageLevel.when(
-                      data: (level) => Container(
-                        width: 50, height: 50,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Constants.kPrimaryColor,
-                        ),
-                        child: Center(
-                          child: Text(level!,
-                            style: Constants.kTitleTextStyle.
-                            copyWith(color: Colors.white),),
-                        ),
-                      ),
-                      error: (error, stackTrace) => Container(),
-                      loading: () => Container(),
-
-                    ),
-
-                  ],
-                ),
-                SizedBox(height: 10.h,),
-
-                Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                RichText(
+                  text: TextSpan(
                     children: [
-                      CircleAvatar(
-                        backgroundImage: CachedNetworkImageProvider(user.image!),
-                        radius: 30.w,
-                        backgroundColor: Constants.kSixthColor,
-                      ),
-                      SizedBox(height: 5.h,),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Image.asset("assets/icons/star.png", width: 25.w,),
-                          SizedBox(width: 5.w, ),
-                          Text("${user.point!} Puan", style: Constants.kTextStyle,)
-                        ],
-                      ),
-
-
-
+                      TextSpan(text: "Hoşgeldin\n", style: Constants.kTitleTextStyle.copyWith(
+                        fontSize: 50.w, color: Constants.kSecondColor,)),
+                      TextSpan(text: user.name!, style: Constants.kTextStyle.copyWith(
+                        fontSize: 20.w, color: Colors.black
+                      ))
                     ],
                   ),
                 ),
+                languageLevel.when(
+                  data: (level) => GestureDetector(
+                    onTap: () {
+                      mainWatch.setLanguageLevel("");
+                      Navigator.pushAndRemoveUntil(context, mainWatch.routeToSignInScreen(const MainView()), (route) => false);
+                    },
+                    child: Container(
+                      width: 50, height: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Constants.kPrimaryColor,
+                      ),
+                      child: Center(
+                        child: Text(mainState.languageLevel,
+                          style: Constants.kTitleTextStyle.
+                          copyWith(color: Colors.white),),
+                      ),
+                    ),
+                  ),
+                  error: (error, stackTrace) => Container(),
+                  loading: () => Container(),
+
+                ),
+
               ],
+            ),
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    backgroundImage: CachedNetworkImageProvider(user.image!),
+                    radius: 30.w,
+                    backgroundColor: Constants.kSixthColor,
+                  ),
+                  SizedBox(height: 5.h,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Image.asset("assets/icons/star.png", width: 25.w,),
+                      SizedBox(width: 5.w, ),
+                      Text("${user.point!} Puan", style: Constants.kTextStyle,)
+                    ],
+                  ),
+
+
+
+                ],
+              ),
             ),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,

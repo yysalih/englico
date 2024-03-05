@@ -87,7 +87,8 @@ class NoMoreWidget extends StatelessWidget {
 }
 
 class NoPracticeWidget extends StatelessWidget {
-  const NoPracticeWidget({super.key});
+  final String text;
+  const NoPracticeWidget({super.key, this.text = "Yeni kelimeler öğrendikten sonra burada tekrar yapabilirsin."});
 
 
   @override
@@ -99,7 +100,7 @@ class NoPracticeWidget extends StatelessWidget {
         children: [
           Image.asset("assets/icons/empty.png", width: 150.w,),
           SizedBox(height: 20.h,),
-          Text("Yeni kelimeler öğrendikten sonra burada tekrar yapabilirsin.",
+          Text(text,
             style: Constants.kTextStyle.copyWith(
               fontWeight: FontWeight.bold, fontSize: 20.w,
             ), textAlign: TextAlign.center,)
