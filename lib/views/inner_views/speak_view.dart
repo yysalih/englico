@@ -13,22 +13,52 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../controllers/ad_controller.dart';
 import '../../models/user_model.dart';
 import '../../widgets/custom_button.dart';
 
-class SpeakView extends ConsumerWidget {
+class SpeakView extends ConsumerStatefulWidget {
   SpeakView({super.key});
 
+  @override
+  ConsumerState<SpeakView> createState() => _SpeakViewState();
+}
+
+class _SpeakViewState extends ConsumerState<SpeakView> {
   final CardSwiperController _cardSwiperController = CardSwiperController();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  void initState() {
+    final userStream = ref.read(userStreamProvider(FirebaseAuth.instance.currentUser!.uid));
+
+    userStream.when(
+      data: (user) {
+        final adRead = ref.read(adController.notifier);
+        if(!user.isUserPremium) {
+          adRead.loadInterstitialAd();
+        }
+      },
+      loading: () {
+        debugPrint("loading");
+      },
+      error: (error, stackTrace) {
+        debugPrint(error.toString());
+        debugPrint(stackTrace.toString());
+      },
+    );
+    super.initState();
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
 
     final words = ref.watch(wordsStreamProvider);
     final user = ref.watch(userStreamProvider(FirebaseAuth.instance.currentUser!.uid));
     final languageLevel = ref.watch(languageLevelProvider);
 
     final mainWatch = ref.watch(mainController.notifier);
+    final adWatch = ref.watch(adController.notifier);
     final speakWatch = ref.watch(speakController.notifier);
     final speakState = ref.watch(speakController);
 
@@ -65,7 +95,13 @@ class SpeakView extends ConsumerWidget {
                               foregroundColor: Colors.white, backgroundColor: Constants.kPrimaryColor,
                               shape: const CircleBorder(),
                             ),
-                            onPressed: () => Navigator.pop(context),
+                            onPressed: () {
+                              if(!user.isUserPremium) {
+                                adWatch.showInterstitialAd();
+                              }
+                              Navigator.pop(context);
+
+                            },
                             child: Center(child: Icon(Icons.arrow_back_ios_new, size: 15.w, color: Colors.white),),
                           ),
                           Image.asset("assets/icons/speak.png", width: 30.w),
@@ -91,9 +127,9 @@ class SpeakView extends ConsumerWidget {
                             isLoop: true,
                             controller: _cardSwiperController,
                             onEnd: () {
-                      
+
                             },
-                      
+
                             cardBuilder: (context, index, a, b) {
                               if(userWordList.isEmpty) {
                                 return const NoPracticeWidget();
@@ -114,7 +150,7 @@ class SpeakView extends ConsumerWidget {
                                                     [.3, 0.2, 0.1, 0.1][i]
                                                 )
                                             ]
-                      
+
                                           )
                                         ),
                                         child: Padding(

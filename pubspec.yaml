@@ -30,6 +30,8 @@ dependencies:
   flutter_tts: ^3.8.5
   speech_to_text: ^6.6.0
   permission_handler: ^11.3.0
+  image_picker: ^1.0.7
+  google_mobile_ads: ^4.0.0
 
 
 dev_dependencies:

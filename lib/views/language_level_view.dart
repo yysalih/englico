@@ -23,7 +23,7 @@ class LanguageLevelView extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(height: 20.h,),
-          Text("Senin için uygun olan bir dil seviyesi seç", textAlign: TextAlign.start,
+          Text("Senin için uygun olan bir dil seviyesi seç", textAlign: TextAlign.center,
             style: Constants.kTitleTextStyle.copyWith(color: Colors.black),),
           SizedBox(height: 20.h,),
           for(int i = 0; i < mainWatch.languageLevels.length; i++)
@@ -35,7 +35,7 @@ class LanguageLevelView extends ConsumerWidget {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter, end: Alignment.bottomCenter,
                     colors: [Constants.kFifthColor.withOpacity(.2),
-                      Constants.kFifthColor.withOpacity(.1), Constants.kFifthColor.withOpacity(.0),]
+                      Constants.kPrimaryColor.withOpacity(.2)]
                   ),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(color: mainState.languageLevel == mainWatch.languageLevels[i]["level"] ?
@@ -55,6 +55,7 @@ class LanguageLevelView extends ConsumerWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(mainWatch.languageLevels[i]["title"],
+
                                 style: Constants.kTitleTextStyle.copyWith(color: Colors.black),),
                               Checkbox(
 

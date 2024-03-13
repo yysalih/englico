@@ -4,6 +4,7 @@ import 'package:englico/controllers/settings_controller.dart';
 import 'package:englico/controllers/user_controller.dart';
 import 'package:englico/repository/user_repository.dart';
 import 'package:englico/utils/contants.dart';
+import 'package:englico/views/inner_views/edit_profile_view.dart';
 import 'package:englico/views/main_view.dart';
 import 'package:englico/widgets/status_widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,6 +19,15 @@ class SettingsView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
+    final List<Color> colors = [
+      Constants.kPrimaryColor,
+      Constants.kSecondColor,
+      Constants.kThirdColor,
+      Constants.kFourthColor,
+      Constants.kFifthColor,
+      Constants.kSixthColor,
+    ];
 
     final settingsWatch = ref.watch(settingsController.notifier);
     final userWatch = ref.watch(userController.notifier);
@@ -42,7 +52,11 @@ class SettingsView extends ConsumerWidget {
                   SizedBox(height: 10.h,),
                   Text(user.name!, style: Constants.kTitleTextStyle,),
                   SizedBox(height: 5.h,),
-                  Text(user.email!, style: Constants.kTextStyle,),
+                  Text("@${user.username!}", style: Constants.kTitleTextStyle.copyWith(
+                     color: Constants.kSecondColor
+                  ),),
+                  SizedBox(height: 5.h,),
+                  Text("${user.point!} Puan", style: Constants.kTextStyle,),
                 ],
               ),
             ),
@@ -58,6 +72,17 @@ class SettingsView extends ConsumerWidget {
                     mainWatch.setLanguageLevel("");
                     Navigator.pushAndRemoveUntil(context, mainWatch.routeToSignInScreen(const MainView()), (route) => false);
                   }
+
+                  else if(settingsWatch.settingsWidgets[i]["icon"] == "user") {
+                    userWatch.setFields(user);
+                    Navigator.push(context, mainWatch.routeToSignInScreen(const EditProfileView()));
+                  }
+
+                  else if(settingsWatch.settingsWidgets[i]["icon"] == "trash") {
+                    userWatch.deleteAccount(context);
+                    Navigator.pushAndRemoveUntil(context, mainWatch.routeToSignInScreen(AuthView()), (route) => false);
+
+                  }
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -67,7 +92,7 @@ class SettingsView extends ConsumerWidget {
                       Row(
                         children: [
                           CircleAvatar(
-                            backgroundColor: Constants.kPrimaryColor,
+                            backgroundColor: colors.reversed.toList()[i],
                             radius: 30,
                             child: Image.asset("assets/ui/${settingsWatch.settingsWidgets[i]["icon"]}.png",
                               width: 22.w, color: Colors.white,),

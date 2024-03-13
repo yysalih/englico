@@ -13,16 +13,45 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 
+import '../../controllers/ad_controller.dart';
 import '../../models/user_model.dart';
 import '../../widgets/word_card_widget.dart';
 
-class PracticeView extends ConsumerWidget {
+class PracticeView extends ConsumerStatefulWidget {
   PracticeView({super.key});
 
+  @override
+  ConsumerState<PracticeView> createState() => _PracticeViewState();
+}
+
+class _PracticeViewState extends ConsumerState<PracticeView> {
   final CardSwiperController _cardSwiperController = CardSwiperController();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  void initState() {
+    final userStream = ref.read(userStreamProvider(FirebaseAuth.instance.currentUser!.uid));
+
+    userStream.when(
+      data: (user) {
+        final adRead = ref.read(adController.notifier);
+        if(!user.isUserPremium) {
+          adRead.loadInterstitialAd();
+        }
+      },
+      loading: () {
+        debugPrint("loading");
+      },
+      error: (error, stackTrace) {
+        debugPrint(error.toString());
+        debugPrint(stackTrace.toString());
+      },
+    );
+    super.initState();
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
 
     final words = ref.watch(wordsStreamProvider);
     final user = ref.watch(userStreamProvider(FirebaseAuth.instance.currentUser!.uid));
@@ -30,6 +59,8 @@ class PracticeView extends ConsumerWidget {
 
     final mainState = ref.watch(mainController);
     final mainWatch = ref.watch(mainController.notifier);
+
+    final adWatch = ref.watch(adController.notifier);
 
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
@@ -63,7 +94,13 @@ class PracticeView extends ConsumerWidget {
                               foregroundColor: Colors.white, backgroundColor: Constants.kPrimaryColor,
                               shape: const CircleBorder(),
                             ),
-                            onPressed: () => Navigator.pop(context),
+                            onPressed: () {
+                              if(!user.isUserPremium) {
+                                adWatch.showInterstitialAd();
+                              }
+                              Navigator.pop(context);
+
+                            },
                             child: Center(child: Icon(Icons.arrow_back_ios_new, size: 15.w, color: Colors.white),),
                           ),
                           Image.asset("assets/icons/practice.png", width: 40.w),
@@ -89,9 +126,9 @@ class PracticeView extends ConsumerWidget {
                             isLoop: true,
                             controller: _cardSwiperController,
                             onEnd: () {
-                      
+
                             },
-                      
+
                             cardBuilder: (context, index, a, b) {
                               if(userWordList.isEmpty) {
                                 return const NoMoreWidget();

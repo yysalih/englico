@@ -64,7 +64,7 @@ class SavedWordsView extends ConsumerWidget {
 
                   ],
                 ),
-                SizedBox(height: 10,),
+                const SizedBox(height: 10,),
 
                 words.isEmpty ? Padding(
                   padding: EdgeInsets.only(top: 150.h),

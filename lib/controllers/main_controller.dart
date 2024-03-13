@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:englico/views/main_views/best_users_view.dart';
 import 'package:englico/views/main_views/home_view.dart';
 import 'package:englico/views/main_views/saved_words_view.dart';
+import 'package:englico/views/main_views/sayings_view.dart';
 import 'package:englico/views/main_views/settings_view.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,13 +15,18 @@ enum languageLevels {A1, A2, B1, B2, C1}
 class MainState {
   final int bottomIndex;
   final String languageLevel;
+  final String selectedTab;
 
-  MainState({required this.bottomIndex, required this.languageLevel});
+  MainState({required this.bottomIndex,
+    required this.languageLevel,
+    required this.selectedTab,
+  });
 
-  MainState copyWith({int? bottomIndex, String? languageLevel,}) {
+  MainState copyWith({int? bottomIndex, String? languageLevel, String? selectedTab,}) {
     return MainState(
       bottomIndex: bottomIndex ?? this.bottomIndex,
       languageLevel: languageLevel ?? this.languageLevel,
+      selectedTab: selectedTab ?? this.selectedTab,
     );
   }
 }
@@ -46,17 +55,17 @@ class MainController extends StateNotifier<MainState> {
 
   final PageController pageController = PageController(initialPage: 0);
 
-  final List<Widget> pages = [const HomeView(), Container(), Container(), const SavedWordsView(), const SettingsView()];
+  final List<Widget> pages = [ HomeView(), BestUsersView(), SayingsView(),
+    SavedWordsView(), SettingsView()];
 
   changePage(int index) {
     state = state.copyWith(bottomIndex: index);
-
   }
 
   Future<void> configureTts() async {
     await flutterTts.setLanguage('en-US');
     await flutterTts.setSpeechRate(0.75);
-    await flutterTts.setVolume(1.25);
+    await flutterTts.setVolume(1.0);
   }
 
   void speakText(String text) async {
@@ -93,7 +102,64 @@ class MainController extends StateNotifier<MainState> {
     debugPrint(state.languageLevel.toString());
     debugPrint(prefs.getString("language_level")!.toString());
   }
+
+  checkPointsCategory() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    //week
+    if(prefs.containsKey("week")) {
+      int month = prefs.getInt("week")!;
+
+      if(month != DateTime.now().weekday) {
+        await FirebaseFirestore.instance.collection("users").doc(FirebaseAuth.instance.currentUser!.uid).update({
+          "weeklyPoint" : 0
+        });
+        prefs.setInt("week", DateTime.now().weekday);
+      }
+
+    }
+    else {
+      prefs.setInt("week", DateTime.now().weekday);
+    }
+
+    //month
+    if(prefs.containsKey("month")) {
+      int month = prefs.getInt("month")!;
+
+      if(month != DateTime.now().month) {
+        await FirebaseFirestore.instance.collection("users").doc(FirebaseAuth.instance.currentUser!.uid).update({
+          "monthlyPoint" : 0
+        });
+        prefs.setInt("month", DateTime.now().month);
+      }
+
+    }
+    else {
+      prefs.setInt("month", DateTime.now().month);
+    }
+
+    //year
+    if(prefs.containsKey("year")) {
+      int month = prefs.getInt("year")!;
+
+      if(month != DateTime.now().year) {
+        await FirebaseFirestore.instance.collection("users").doc(FirebaseAuth.instance.currentUser!.uid).update({
+          "annuallyPoint" : 0
+        });
+        prefs.setInt("year", DateTime.now().year);
+      }
+
+    }
+    else {
+      prefs.setInt("year", DateTime.now().year);
+    }
+
+  }
+
+  changeSelectedTab(String value) {
+    state = state.copyWith(selectedTab: value);
+  }
 }
 
 final mainController = StateNotifierProvider<MainController, MainState>(
-        (ref) => MainController(MainState(bottomIndex: 0, languageLevel: "")));
+        (ref) => MainController(MainState(bottomIndex: 0, languageLevel: "", selectedTab: "point")));

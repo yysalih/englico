@@ -55,6 +55,9 @@ class ResetPasswordView extends ConsumerWidget {
                         isObscure: false,
                         prefixIcon: Icons.email,
                         controller: authWatch.resetPasswordController,
+                        onChanged: (p0) {
+
+                        },
                         validator: AppValidators.emailValidator,
                       ),
                       SizedBox(height: 10,),

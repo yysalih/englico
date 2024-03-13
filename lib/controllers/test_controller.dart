@@ -20,6 +20,11 @@ class TestState {
   final List correctKeys;
   final List correctValues;
 
+  final List keys;
+  final List values;
+
+  final bool isShuffled;
+
   TestState({
     required this.key,
     required this.correctValues,
@@ -30,11 +35,15 @@ class TestState {
     required this.activeQuestionIndex,
     required this.isAnswered,
     required this.point,
+    required this.keys,
+    required this.values,
+    required this.isShuffled,
   });
 
   TestState copyWith({
     int? activeQuestionIndex,
     bool? isAnswered,
+    bool? isShuffled,
     int? point,
     String? key,
     String? value,
@@ -42,6 +51,8 @@ class TestState {
     Color? selectedValueColor,
     List? correctValues,
     List? correctKeys,
+    List? keys,
+    List? values,
   }) {
     return TestState(
       selectedKeyColor: selectedKeyColor ?? this.selectedKeyColor,
@@ -53,6 +64,9 @@ class TestState {
       point: point ?? this.point,
       correctKeys: correctKeys ?? this.correctKeys,
       correctValues: correctValues ?? this.correctValues,
+      keys: keys ?? this.keys,
+      values: values ?? this.values,
+      isShuffled: isShuffled ?? this.isShuffled,
     );
   }
 }
@@ -108,6 +122,7 @@ class TestController extends StateNotifier<TestState> {
   resetAll() {
     state = state.copyWith(
       key: "", value: "", selectedKeyColor: Colors.white, selectedValueColor: Colors.white,
+      isShuffled: false, values: [], keys: [],
 
     );
   }
@@ -157,6 +172,17 @@ class TestController extends StateNotifier<TestState> {
       }
     }
   }
+
+  updateKeysAndValues({required WordMatchModel wordMatchModel}) {
+    state = state.copyWith(
+      keys: wordMatchModel.words!.keys.toList().where((element) => !state.correctKeys.contains(element)).toList(),
+      values: wordMatchModel.words!.values.toList().where((element) => !state.correctValues.contains(element)).toList()
+    );
+  }
+
+  changeIsShuffled({required bool value}) {
+    state = state.copyWith(isShuffled: value);
+  }
 }
 
 final testController = StateNotifierProvider<TestController, TestState>((ref) =>
@@ -169,7 +195,7 @@ final testController = StateNotifierProvider<TestController, TestState>((ref) =>
       point: 0,
       selectedKeyColor: Colors.white,
       selectedValueColor: Colors.white,
-
+      keys: [], values: [], isShuffled: false
     )
   )
 );

@@ -35,116 +35,121 @@ class HomeView extends ConsumerWidget {
       error: (error, stackTrace) => const AppErrorWidget(),
       data: (user) => Padding(
         padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(text: "Hoşgeldin\n", style: Constants.kTitleTextStyle.copyWith(
-                        fontSize: 50.w, color: Constants.kSecondColor,)),
-                      TextSpan(text: user.name!, style: Constants.kTextStyle.copyWith(
-                        fontSize: 20.w, color: Colors.black
-                      ))
-                    ],
-                  ),
-                ),
-                languageLevel.when(
-                  data: (level) => GestureDetector(
-                    onTap: () {
-                      mainWatch.setLanguageLevel("");
-                      Navigator.pushAndRemoveUntil(context, mainWatch.routeToSignInScreen(const MainView()), (route) => false);
-                    },
-                    child: Container(
-                      width: 50, height: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Constants.kPrimaryColor,
-                      ),
-                      child: Center(
-                        child: Text(mainState.languageLevel,
-                          style: Constants.kTitleTextStyle.
-                          copyWith(color: Colors.white),),
-                      ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(text: "Hoşgeldin\n", style: Constants.kTitleTextStyle.copyWith(
+                          fontSize: 50.w, color: Constants.kSecondColor,)),
+                        TextSpan(text: user.name!, style: Constants.kTextStyle.copyWith(
+                          fontSize: 20.w, color: Colors.black
+                        ))
+                      ],
                     ),
                   ),
-                  error: (error, stackTrace) => Container(),
-                  loading: () => Container(),
+                  languageLevel.when(
+                    data: (level) => GestureDetector(
+                      onTap: () {
+                        mainWatch.setLanguageLevel("");
+                        Navigator.pushAndRemoveUntil(context, mainWatch.routeToSignInScreen(const MainView()), (route) => false);
+                      },
+                      child: Container(
+                        width: 50, height: 50,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Constants.kPrimaryColor,
+                        ),
+                        child: Center(
+                          child: Text(mainState.languageLevel,
+                            style: Constants.kTitleTextStyle.
+                            copyWith(color: Colors.white),),
+                        ),
+                      ),
+                    ),
+                    error: (error, stackTrace) => Container(),
+                    loading: () => Container(),
 
-                ),
-
-              ],
-            ),
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  CircleAvatar(
-                    backgroundImage: CachedNetworkImageProvider(user.image!),
-                    radius: 30.w,
-                    backgroundColor: Constants.kSixthColor,
                   ),
-                  SizedBox(height: 5.h,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Image.asset("assets/icons/star.png", width: 25.w,),
-                      SizedBox(width: 5.w, ),
-                      Text("${user.point!} Puan", style: Constants.kTextStyle,)
-                    ],
-                  ),
-
-
 
                 ],
               ),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    HomeViewWidget(
-                      onPressed: () => Navigator.push(context, mainWatch.routeToSignInScreen(LearnView())),
-                        title: "Öğren", icon: "learn"),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 30.0.h),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                        backgroundImage: CachedNetworkImageProvider(user.image!),
+                        radius: 30.w,
+                        backgroundColor: Constants.kSixthColor,
+                      ),
+                      SizedBox(height: 5.h,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Image.asset("assets/icons/star.png", width: 25.w,),
+                          SizedBox(width: 5.w, ),
+                          Text("${user.point!} Puan", style: Constants.kTextStyle,)
+                        ],
+                      ),
 
-                    HomeViewWidget(
-                        onPressed: () {
-                          testWatch.changePoint(value: 0);
-                          Navigator.push(context, mainWatch.routeToSignInScreen(const TestView()));
-                        },
 
-                        title: "Test Et", icon: "multiple_choice"),
-                  ],
+
+                    ],
+                  ),
                 ),
-                SizedBox(height: 20.h,),
-                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    HomeViewWidget(
-                        onPressed: () => Navigator.push(context, mainWatch.routeToSignInScreen(PracticeView())),
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      HomeViewWidget(
+                        onPressed: () => Navigator.push(context, mainWatch.routeToSignInScreen(LearnView())),
+                          title: "Öğren", icon: "learn"),
 
-                        title: "Tekrar Et", icon: "practice"),
-                    HomeViewWidget(
-                        onPressed: () => Navigator.push(context, mainWatch.routeToSignInScreen(SpeakView())),
+                      HomeViewWidget(
+                          onPressed: () {
+                            testWatch.changePoint(value: 0);
+                            Navigator.push(context, mainWatch.routeToSignInScreen(const TestView()));
+                          },
 
-                        title: "Konuş", icon: "speak"),
+                          title: "Test Et", icon: "multiple_choice"),
+                    ],
+                  ),
+                  SizedBox(height: 20.h,),
+                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      HomeViewWidget(
+                          onPressed: () => Navigator.push(context, mainWatch.routeToSignInScreen(PracticeView())),
+
+                          title: "Tekrar Et", icon: "practice"),
+                      HomeViewWidget(
+                          onPressed: () => Navigator.push(context, mainWatch.routeToSignInScreen(SpeakView())),
+
+                          title: "Konuş", icon: "speak"),
 
 
-                  ],
-                ),
-              ],
-            ),
-          ],
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -8,9 +8,11 @@ import '../controllers/auth_controller.dart';
 class AuthTextField extends ConsumerWidget {
   final bool isObscure;
   final String hintText;
+  final String initialValue;
   final IconData prefixIcon;
   final TextEditingController controller;
   final String? Function(String?)? validator;
+  final Function(String?)? onChanged;
 
   const AuthTextField({
     super.key,
@@ -19,6 +21,8 @@ class AuthTextField extends ConsumerWidget {
     required this.prefixIcon,
     required this.controller,
     required this.validator,
+    required this.onChanged,
+    this.initialValue = "",
   });
 
   @override
@@ -40,11 +44,12 @@ class AuthTextField extends ConsumerWidget {
       child: TextFormField(
         textInputAction: TextInputAction.done,
         validator: validator,
+        onChanged: onChanged,
         obscureText: isObscure ? authState.isObscure : false,
-        controller: controller,
+        controller:  controller,
         decoration: Constants.kInputDecorationWithNoBorder.copyWith(
           prefixIcon: Icon(prefixIcon),
-          hintText: hintText,
+          hintText: initialValue.isEmpty ? hintText : initialValue,
           suffixIcon: !isObscure ? null : IconButton(
             icon: Icon(Icons.remove_red_eye_rounded),
             onPressed: () {

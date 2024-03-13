@@ -16,17 +16,48 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../controllers/ad_controller.dart';
 import '../../utils/contants.dart';
 
-class TestView extends ConsumerWidget {
+class TestView extends ConsumerStatefulWidget {
   const TestView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<TestView> createState() => _TestViewState();
+}
+
+class _TestViewState extends ConsumerState<TestView> {
+
+  @override
+  void initState() {
+    final userStream = ref.read(userStreamProvider(FirebaseAuth.instance.currentUser!.uid));
+
+    userStream.when(
+      data: (user) {
+        final adRead = ref.read(adController.notifier);
+        if(!user.isUserPremium) {
+          adRead.loadInterstitialAd();
+        }
+      },
+      loading: () {
+        debugPrint("loading");
+      },
+      error: (error, stackTrace) {
+        debugPrint(error.toString());
+        debugPrint(stackTrace.toString());
+      },
+    );
+    super.initState();
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final testState = ref.watch(testController);
     final testWatch = ref.watch(testController.notifier);
 
     final mainWatch = ref.watch(mainController.notifier);
+    final adWatch = ref.watch(adController.notifier);
 
     final userWatch = ref.watch(userController.notifier);
 
@@ -80,8 +111,12 @@ class TestView extends ConsumerWidget {
                                           onPressed: () {
                                             testWatch.changeIsAnswered(value: false);
                                             testWatch.changeActiveQuestion(0);
+                                            if(!user.isUserPremium) {
+                                              adWatch.showInterstitialAd();
+                                            }
                                             Navigator.pushAndRemoveUntil(context,
                                               mainWatch.routeToSignInScreen(const ShowProgressView()), (route) => false,);
+
                                           },),),
                                       child: Center(child: Icon(Icons.arrow_back_ios_new, size: 15.w, color: Colors.white),),
                                     ),
@@ -135,6 +170,7 @@ class TestView extends ConsumerWidget {
                                     borderRadius: BorderRadius.circular(50),
                                     child: MaterialButton(
                                       onPressed: () {
+
                                         testWatch.continueButton(
                                           allQuestions: allQuestions,
                                           contents: contents,

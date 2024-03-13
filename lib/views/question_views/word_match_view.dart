@@ -12,7 +12,7 @@ import '../../models/question_model.dart';
 import '../../models/test_model.dart';
 import '../../models/user_model.dart';
 
-class WordMatchView extends ConsumerWidget {
+class WordMatchView extends ConsumerStatefulWidget {
   final WordMatchModel wordMatchModel;
   final List<QuestionModel> allQuestions;
   final List<ContentModel> contents;
@@ -29,15 +29,41 @@ class WordMatchView extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<WordMatchView> createState() => _WordMatchViewState();
+}
+
+class _WordMatchViewState extends ConsumerState<WordMatchView> {
+
+  List? shuffledKeys;
+  List? shuffledValues;
+
+  bool isShuffled = false;
+
+
+  @override
+  Widget build(BuildContext context) {
 
     final testWatch = ref.watch(testController.notifier);
     final userWatch = ref.watch(userController.notifier);
     final testState = ref.watch(testController);
 
-    final keys = wordMatchModel.words!.keys.toList().where((element) => !testState.correctKeys.contains(element)).toList();
-    final values = wordMatchModel.words!.values.toList().where((element) => !testState.correctValues.contains(element)).toList();
+    //final keys = widget.wordMatchModel.words!.keys.toList().where((element) => !testState.correctKeys.contains(element)).toList()..shuffle();
+    //final values = widget.wordMatchModel.words!.values.toList().where((element) => !testState.correctValues.contains(element)).toList()..shuffle();
+    shuffledKeys = widget.wordMatchModel.words!.keys.toList().where((element) => !testState.correctKeys.contains(element)).toList();
+    shuffledValues = widget.wordMatchModel.words!.values.toList().where((element) => !testState.correctValues.contains(element)).toList();
 
+    if (!isShuffled) {
+      // Initial shuffle
+
+      shuffledKeys!.shuffle();
+      shuffledValues!.shuffle();
+
+      isShuffled = true;
+
+    }
+
+    final keys = shuffledKeys ?? [];
+    final values = shuffledValues ?? [];
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -125,10 +151,10 @@ class WordMatchView extends ConsumerWidget {
                               if(keys.isEmpty) {
                                 testWatch.changeIsAnswered(value: true);
                                 testWatch.continueButton(
-                                    allQuestions: allQuestions,
-                                    contents: contents,
-                                    tests: tests,
-                                    user: user,
+                                    allQuestions: widget.allQuestions,
+                                    contents: widget.contents,
+                                    tests: widget.tests,
+                                    user: widget.user,
                                     userWatch: userWatch
                                 );
 
@@ -145,7 +171,7 @@ class WordMatchView extends ConsumerWidget {
                                 Future.delayed(const Duration(milliseconds: 75), () {
                                   final testState = ref.read(testController);
 
-                                  if(wordMatchModel.words![testState.key] != testState.value) {
+                                  if(widget.wordMatchModel.words![testState.key] != testState.value) {
                                     testWatch.changeSelectedColor(Colors.redAccent, isKey: true);
                                     testWatch.changeSelectedColor(Colors.redAccent, isKey: false);
 

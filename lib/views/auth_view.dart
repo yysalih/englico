@@ -60,11 +60,17 @@ class AuthView extends ConsumerWidget {
                           isObscure: false,
                           prefixIcon: Icons.email,
                           controller: authWatch.emailController,
+                          onChanged: (p0) {
+
+                          },
                           validator: AppValidators.emailValidator,
                         ),
                         const SizedBox(height: 20,),
                         AuthTextField(
                           hintText: "Şifre",
+                          onChanged: (p0) {
+
+                          },
                           isObscure: true,
                           prefixIcon: Icons.lock,
                           validator: AppValidators.passwordValidator,
@@ -72,6 +78,9 @@ class AuthView extends ConsumerWidget {
                         ),
                         const SizedBox(height: 20,),
                         authState.isRegister ? AuthTextField(
+                          onChanged: (p0) {
+
+                          },
                           hintText: "Şifre Tekrar",
                           isObscure: true,
                           prefixIcon: Icons.lock,

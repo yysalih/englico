@@ -19,6 +19,11 @@ class UserRepository {
     });
   }
 
+  Stream<List<UserModel>> getUsers() {
+    return _databaseReference.collection("users").orderBy(_uid, descending: true).snapshots().map((snapshot) {
+      return snapshot.docs.map((e) => UserModel().fromJson(e.data())).toList();
+    });
+  }
 
 }
 
@@ -28,6 +33,14 @@ final userStreamProvider = StreamProvider.autoDispose.family<UserModel, String?>
 
   // call method that returns a Stream<User>
   return userRepository.getUser();
+});
+
+final usersStreamProvider = StreamProvider.autoDispose.family<List<UserModel>, String?>((ref, uid) {
+  // get repository from the provider below
+  final userRepository = ref.watch(userRepositoryProvider(uid));
+
+  // call method that returns a Stream<User>
+  return userRepository.getUsers();
 });
 
 final userRepositoryProvider = Provider.family<UserRepository, String?>((ref, uid) {
