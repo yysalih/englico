@@ -30,6 +30,14 @@
           }
         },
         {
+          "client_id": "810323423923-trc7123iqgmcrn07ii2kts94rjgds0v6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.englico.englico",
+            "certificate_hash": "9bfb8e6247da80ead35311320e1d5a53c2730886"
+          }
+        },
+        {
           "client_id": "810323423923-kvvnj2eufb5gior8j8q61q636m3os056.apps.googleusercontent.com",
           "client_type": 3
         }

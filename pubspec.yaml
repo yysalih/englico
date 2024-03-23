@@ -3,7 +3,7 @@ description: "Englico"
 
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: '>=3.2.6 <4.0.0'
@@ -32,6 +32,8 @@ dependencies:
   permission_handler: ^11.3.0
   image_picker: ^1.0.7
   google_mobile_ads: ^4.0.0
+  purchases_flutter: ^6.24.0
+  intl: ^0.19.0
 
 
 dev_dependencies:

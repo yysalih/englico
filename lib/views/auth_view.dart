@@ -87,32 +87,62 @@ class AuthView extends ConsumerWidget {
                           controller: authWatch.passwordRepeatController,
                           validator: (p0) => AppValidators.confirmPasswordValidator(authWatch.passwordController.text, p0),
                         ) : Container(),
-                        /*authState.isRegister ? Row(
-                          children: [
-                            Checkbox(
-                              onChanged: (value) => authWatch.changeCheckBox(),
-                              value: authState.hasInviteCode,
-                            ),
-                            Text("Davet Kodum Var"),
-                          ],
-                        ) : Container(),
-                        authState.hasInviteCode && authState.isRegister ?
-                        AuthTextField(
-                          hintText: "Davet Kodu",
-                          isObscure: false,
-                          prefixIcon: Icons.star,
-                          controller: authWatch.inviteCodeController,
-                          validator: null,
-                        ) : Container(),
-                        ,*/
+
                         SizedBox(height: authState.isRegister ? 10 : 0,),
+                        FutureBuilder(
+                            future: Authentication.initializeFirebase(context: context, authWatch: authWatch),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.done) {
+                                return Container(
+                                  width: width, height: height * .05,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: MaterialButton(
+                                      onPressed: () async {
+                                        if (_formKey.currentState == null) return;
+                                        if (!_formKey.currentState!.validate()) return;
+                                        authWatch.handleEmailSignIn(context, mainWatch);
+
+
+                                      },
+                                      color: Constants.kPrimaryColor,
+                                      child: Center(child: Text(authState.isRegister ? "Kayıt Ol" : "Giriş Yap",
+                                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),)),
+                                    ),
+                                  ),
+                                );
+                              }
+                              return Container(
+                                width: width, height: height * .05,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: MaterialButton(
+                                    onPressed: () {
+                                      if (_formKey.currentState == null) return;
+                                      if (!_formKey.currentState!.validate()) return;
+                                    },
+                                    color: Constants.kPrimaryColor,
+                                    child: const Center(child: CircularProgressIndicator(color: Colors.white),),
+                                  ),
+                                ),
+                              );
+                            }
+                        ),
+                        SizedBox(height: 10,),
 
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             GestureDetector(
                               onTap: () {
-                                debugPrint("invite code: ${authWatch.inviteCodeController.text}");
                                 authWatch.switchRegister();
                               },
                               child: Text(authState.isRegister ? "Hesabım Var" : "Hesap Oluştur", style: const TextStyle(

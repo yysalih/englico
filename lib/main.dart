@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:englico/controllers/main_controller.dart';
 import 'package:englico/controllers/speak_controller.dart';
 import 'package:englico/utils/contants.dart';
@@ -7,7 +8,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -16,6 +17,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  await initPlatformState();
 
   runApp(const ProviderScope(child: MyApp()));
 }
@@ -58,6 +61,23 @@ class _MyAppState extends ConsumerState<MyApp> {
       },
       child: AuthView(),
     );
-
   }
+}
+
+Future<void> initPlatformState() async {
+  await Purchases.setLogLevel(LogLevel.debug);
+
+  PurchasesConfiguration configuration;
+  if (Platform.isAndroid) {
+    configuration = PurchasesConfiguration("goog_dpoBxplwuhhWHiLMWqpjIPzoPPG");
+  } else {
+    configuration = PurchasesConfiguration("appl_JwuzbEJLSKXNThSpMvsczbAYlML");
+  }
+  // await Purchases.setup(
+  //     Platform.isAndroid
+  //         ? "goog_kyaPycIcQaxOPAvSerTwZLZygGZ"//"sk_KaSRHBMpOTsUcbZYiRmcixcHiOLSF"
+  //         : "appl_yqNpQGmYVkOfzndhlJmRcccHODP",
+  //     usesStoreKit2IfAvailable: true,
+  //     observerMode: false);
+  await Purchases.configure(configuration);
 }

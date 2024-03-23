@@ -5,6 +5,7 @@ import 'package:englico/controllers/user_controller.dart';
 import 'package:englico/repository/user_repository.dart';
 import 'package:englico/utils/contants.dart';
 import 'package:englico/views/inner_views/edit_profile_view.dart';
+import 'package:englico/views/inner_views/market_view.dart';
 import 'package:englico/views/main_view.dart';
 import 'package:englico/widgets/status_widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -71,6 +72,10 @@ class SettingsView extends ConsumerWidget {
                   else if(settingsWatch.settingsWidgets[i]["icon"] == "language") {
                     mainWatch.setLanguageLevel("");
                     Navigator.pushAndRemoveUntil(context, mainWatch.routeToSignInScreen(const MainView()), (route) => false);
+                  }
+
+                  else if(settingsWatch.settingsWidgets[i]["icon"] == "subscription") {
+                    Navigator.push(context, mainWatch.routeToSignInScreen(const MarketView()),);
                   }
 
                   else if(settingsWatch.settingsWidgets[i]["icon"] == "user") {
