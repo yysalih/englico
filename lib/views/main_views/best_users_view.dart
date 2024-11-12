@@ -77,7 +77,7 @@ class _BestUsersViewState extends ConsumerState<BestUsersView> {
                   children: [
                     for(int i = 0; i < tabs.length; i++)
                       Container(
-                        height: 40.h,
+                        height: 35.h,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(25),
                             boxShadow: [BoxShadow(
@@ -95,7 +95,7 @@ class _BestUsersViewState extends ConsumerState<BestUsersView> {
                             },
                             child: Center(child: Text(tabs[i]["title"], style: Constants.kTextStyle.copyWith(
                                 color: mainState.selectedTab == tabs[i]["id"] ? Colors.white : Colors.black,
-                                fontSize: 15
+                                fontSize: 13
                             ),),),
                           ),
                         ),
@@ -137,9 +137,14 @@ class _BestUsersViewState extends ConsumerState<BestUsersView> {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(users[index].username!, style: Constants.kTitleTextStyle.copyWith(
-                                        fontSize: 17.5.w
-                                    ),),
+                                    ConstrainedBox(
+                                      constraints: BoxConstraints(
+                                        maxWidth: width * .575
+                                      ),
+                                      child: Text(users[index].username!, style: Constants.kTitleTextStyle.copyWith(
+                                          fontSize: 17.5.w
+                                      ), overflow: TextOverflow.ellipsis),
+                                    ),
                                     Text("${users[index].point!.toString()} Puan",
                                       style: Constants.kTextStyle.copyWith(
                                           fontSize: 15.w, color: Colors.black87
@@ -150,7 +155,7 @@ class _BestUsersViewState extends ConsumerState<BestUsersView> {
                             ),
                             CircleAvatar(
                               radius: 15.w,
-                              backgroundColor: Constants.kFifthColor,
+                              backgroundColor: Constants.kSecondColor,
                               child: Center(
                                 child: Text("${index+1}", style: Constants.kTitleTextStyle.copyWith(
                                     color: Colors.white

@@ -108,6 +108,8 @@ class AuthController extends StateNotifier<AuthState> {
   createNewUser(String uid, User _user) async {
 
     UserModel userModel = UserModel(
+      money: 0.01,
+      hasDiscount: _inviteCodeController.text.isNotEmpty,
       weeklyPoint: 0,
       annuallyPoint: 0, monthlyPoint: 0,
       tests: [], words: [], contents: [],
@@ -127,10 +129,20 @@ class AuthController extends StateNotifier<AuthState> {
 
     await FirebaseFirestore.instance.collection("users").doc(userModel.uid)
         .set(userModel.toJson())
-        .whenComplete(() => print("user created"))
-        .onError((error, stackTrace) => print("Error in create method: $error"));
+        .whenComplete(() => debugPrint("user created"))
+        .onError((error, stackTrace) => debugPrint("Error in create method: $error"));
 
+    if(_inviteCodeController.text.isNotEmpty) {
+      await FirebaseFirestore.instance.collection("app").doc("settings").get().then((settings) async {
+        await FirebaseFirestore.instance.collection("users").doc(_inviteCodeController.text)
+            .get().then((user) async {
+          await FirebaseFirestore.instance.collection("users").doc(_inviteCodeController.text).update({
+            "money" : user["money"] + settings["money"]
+          });
+        });
 
+      });
+    }
   }
 
 
@@ -149,17 +161,17 @@ class AuthController extends StateNotifier<AuthState> {
 
         if(isUserExists) {
           Navigator.push(context,
-              mainWatch.routeToSignInScreen(MainView()));
+              mainWatch.routeToSignInScreen(const MainView()));
         }
         else {
           await createNewUser(user.uid, user);
           Navigator.push(context,
-              mainWatch.routeToSignInScreen(MainView()));
+              mainWatch.routeToSignInScreen(const MainView()));
         }
 
       }
       else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text(
             "Kayıt sırasında bir hata oluştu."
         )));
       }
@@ -178,17 +190,17 @@ class AuthController extends StateNotifier<AuthState> {
 
         if(isUserExists) {
           Navigator.push(context,
-              mainWatch.routeToSignInScreen(MainView()));
+              mainWatch.routeToSignInScreen(const MainView()));
         }
         else {
           await createNewUser(user.uid, user);
           Navigator.push(context,
-              mainWatch.routeToSignInScreen(MainView()));
+              mainWatch.routeToSignInScreen(const MainView()));
         }
 
       }
       else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text(
             "Giriş sırasında bir hata oluştu."
         )));
       }
@@ -199,14 +211,14 @@ class AuthController extends StateNotifier<AuthState> {
     bool status = await Authentication.resetPassword(email: _resetPasswordController.text);
     if(status) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text("Email adresinize şifre yenileme isteği gönderildi!"),
           )
       );
     }
     else {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             backgroundColor: Colors.redAccent,
             content: Text("Şifre yenileme isteği gönderilirken bir hata oluştu!",
               style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),

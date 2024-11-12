@@ -20,6 +20,14 @@ final class AppValidators {
     }
   }
 
+  static String? moneyValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Eksik bilgileri doldurmalısınız.";
+    } else {
+      return null;
+    }
+  }
+
   static String? confirmPasswordValidator(
       String? password, String? confirmPassword) {
     if (password == null || password.isEmpty) {

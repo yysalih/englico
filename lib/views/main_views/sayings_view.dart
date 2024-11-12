@@ -1,6 +1,8 @@
+import 'package:englico/main.dart';
 import 'package:englico/repository/saying_repository.dart';
 import 'package:englico/repository/shared_preferences_repository.dart';
 import 'package:englico/repository/word_repository.dart';
+import 'package:englico/views/inner_views/market_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -59,7 +61,7 @@ class SayingsView extends ConsumerWidget {
                       GestureDetector(
                         onTap: () {
                           mainWatch.setLanguageLevel("");
-                          Navigator.pushAndRemoveUntil(context, mainWatch.routeToSignInScreen(const MainView()), (route) => false);
+                          Navigator.pushAndRemoveUntil(context, mainWatch.routeToSignInScreen(MyApp()), (route) => false);
                         },
                         child: Container(
                           width: 50, height: 50,
@@ -78,11 +80,11 @@ class SayingsView extends ConsumerWidget {
                     ],
                   ),
                   const SizedBox(height: 20,),
-
+                  user.isUserPremium ?
                   saying.isEmpty ? Padding(
                     padding: EdgeInsets.only(top: 150.h),
-                    child: const NoPracticeWidget(
-                      text: "Herhangi bir kelime kaydetmediniz.",
+                    child: NoPracticeWidget(
+                      text: "${language.toString()} için herhangi bir deyim bulunamadı",
                     ),
                   ) :
                   Expanded(
@@ -102,10 +104,10 @@ class SayingsView extends ConsumerWidget {
                                 gradient: LinearGradient(
                                     colors: [
 
-                                      Constants.kThirdColor.withOpacity(.5),
-                                      Constants.kThirdColor.withOpacity(.4),
-                                      Constants.kThirdColor.withOpacity(.3),
-                                      Constants.kThirdColor.withOpacity(.2),
+                                      Constants.kThirdColor.withOpacity(.1),
+                                      Constants.kFifthColor.withOpacity(.2),
+                                      Constants.kFifthColor.withOpacity(.2),
+                                      Constants.kThirdColor.withOpacity(.1),
                                     ],
                                     begin: Alignment.topLeft, end: Alignment.bottomRight
                                 ),
@@ -120,7 +122,7 @@ class SayingsView extends ConsumerWidget {
                                   Padding(
                                     padding: const EdgeInsets.only(left: 10.0, right: 10,),
                                     child: Text(saying[index].saying!, style: Constants.kTextStyle.copyWith(
-                                        fontSize: 17.5, color: Colors.white,
+                                        fontSize: 17.5, color: Colors.black,
                                     ), maxLines: 3, textAlign: TextAlign.start,),
                                   ),
                                   Padding(
@@ -136,7 +138,17 @@ class SayingsView extends ConsumerWidget {
                         ),
                       ),
                     ),
-                  ),
+                  ) :
+                  Padding(
+                    padding: EdgeInsets.only(top: 150.h),
+                    child: GestureDetector(
+                      onTap: () => Navigator.push(context, mainWatch.routeToSignInScreen(MarketView())),
+                      child: NoPracticeWidget(
+                        text: "Deyimler sekmesini abone olan kullanıcılar kullanabilir. \nAbone olmak için tıkla.",
+                      ),
+                    ),
+                  )
+
                 ],
               ),
             );

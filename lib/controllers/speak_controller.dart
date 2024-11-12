@@ -5,17 +5,27 @@ import 'package:speech_to_text/speech_to_text.dart';
 
 class SpeakState {
   final bool speechEnabled;
+  final bool isCorrect;
   final String lastWords;
+  final String currentWord;
 
-  SpeakState({required this.speechEnabled, required this.lastWords});
+  SpeakState({required this.speechEnabled,
+    required this.lastWords,
+    required this.isCorrect,
+    required this.currentWord,
+  });
 
   SpeakState copyWith({
     bool? speechEnabled,
+    bool? isCorrect,
     String? lastWords,
+    String? currentWord,
   }) {
     return SpeakState(
       lastWords: lastWords ?? this.lastWords,
       speechEnabled: speechEnabled ?? this.speechEnabled,
+      isCorrect: isCorrect ?? this.isCorrect,
+      currentWord: currentWord ?? this.currentWord,
     );
   }
 }
@@ -27,6 +37,7 @@ class SpeakController extends StateNotifier<SpeakState> {
 
   void initSpeech() async {
     bool enabled = await speechToText.initialize();
+    debugPrint("speechToText is enabled: $enabled");
     state = state.copyWith(speechEnabled: enabled);
 
   }
@@ -39,8 +50,16 @@ class SpeakController extends StateNotifier<SpeakState> {
     await speechToText.stop();
   }
 
-  void _onSpeechResult(SpeechRecognitionResult result) {
-    state = state.copyWith(lastWords: result.recognizedWords);
+  void _onSpeechResult(SpeechRecognitionResult result,) {
+    debugPrint("Recognized Words: ${result.recognizedWords}");
+    state = state.copyWith(
+      lastWords: result.recognizedWords,
+      isCorrect: result.recognizedWords == state.currentWord
+    );
+  }
+
+  changeIsCorrect({required bool value}) {
+    state = state.copyWith(isCorrect: value);
   }
 
 }
@@ -48,6 +67,8 @@ class SpeakController extends StateNotifier<SpeakState> {
 final speakController = StateNotifierProvider<SpeakController, SpeakState>((ref) => SpeakController(
   SpeakState(
     lastWords: "",
-    speechEnabled: false
+    currentWord: "",
+    speechEnabled: false,
+    isCorrect: false,
   )
 ));

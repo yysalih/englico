@@ -179,7 +179,7 @@ class _LearnViewState extends ConsumerState<LearnView> {
               color: Constants.kPrimaryColor, iconColor: Colors.white, icon: Icons.thumb_up_alt_outlined,
               onTap: () async {
                 userRead.addWordInUserWords(word.uid!, userModel);
-                mainWatch.speakText(word.english!);
+                mainWatch.textToSpeech(word.english!);
                 _cardSwiperController.swipe(CardSwiperDirection.right);
               },
             ),

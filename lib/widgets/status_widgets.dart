@@ -16,7 +16,7 @@ class AppErrorWidget extends StatelessWidget {
           Image.asset("assets/icons/warning.png", width: 100.w,),
           SizedBox(height: 10.h,),
           const Text("Yükleme sırasında bir hata oluştu. Lütfen sayfayı yenileyiniz.",
-            style: Constants.kTextStyle,)
+            style: Constants.kTextStyle, textAlign: TextAlign.center,)
         ],
       ),
     );

@@ -8,8 +8,9 @@ class WordMatchModel implements BaseModel<WordMatchModel> {
 
   final String? type;
   final Map<String, dynamic>? words;
+  final Map<String, dynamic>? shuffledWords;
 
-  const WordMatchModel({this.type = "word_match", this.words});
+  const WordMatchModel({this.type = "word_match", this.words, this.shuffledWords});
 
 
 

@@ -62,7 +62,7 @@ class WordCardWidget extends ConsumerWidget {
                     Column(
                       children: [
                         GestureDetector(
-                          onTap: () => mainWatch.speakText(word.english!.toString()),
+                          onTap: () => mainWatch.textToSpeech(word.english!.toString()),
                           child: Container(
                             width: 45, height: 45,
                             decoration: BoxDecoration(

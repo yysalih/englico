@@ -28,6 +28,10 @@ class TestView extends ConsumerStatefulWidget {
 
 class _TestViewState extends ConsumerState<TestView> {
 
+  List? shuffledKeys;
+  List? shuffledValues;
+  bool shuffled = false;
+
   @override
   void initState() {
     final userStream = ref.read(userStreamProvider(FirebaseAuth.instance.currentUser!.uid));
@@ -87,8 +91,19 @@ class _TestViewState extends ConsumerState<TestView> {
                       final questionsProvider = ref.watch(questionsStreamProvider(
                           "${contents.first.uid}englico${tests.first.uid}"));
 
+
+
                       return questionsProvider.when(
                         data: (allQuestions) {
+                          if(allQuestions[testState.activeQuestionIndex].type == "word_match" && !shuffled) {
+                            shuffledKeys = (allQuestions[testState.activeQuestionIndex]
+                                .question!["words"] as Map).keys.toList()..shuffle();
+                            shuffledValues = (allQuestions[testState.activeQuestionIndex]
+                                .question!["words"] as Map).values.toList()..shuffle();
+
+                            shuffled = true;
+                          }
+
                           return Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -149,8 +164,15 @@ class _TestViewState extends ConsumerState<TestView> {
                               allQuestions[testState.activeQuestionIndex].type != "word_match" ?
                               CommonQuestionView(question: allQuestions[testState.activeQuestionIndex].question!,
                                 userModel: user, questionModel: allQuestions[testState.activeQuestionIndex],)
-                                  : WordMatchView(wordMatchModel: const WordMatchModel().fromJson(
-                                  allQuestions[testState.activeQuestionIndex].question!
+                                  :
+                              WordMatchView(
+                                wordMatchModel: WordMatchModel(
+                                  type: "word_match",
+                                  shuffledWords: {
+                                    for (int i = 0; i < shuffledKeys!.length; i++)
+                                      shuffledKeys![i]: shuffledValues![i]
+                                  },
+                                  words: allQuestions[testState.activeQuestionIndex].question!["words"]
                                 ),
                                 allQuestions: allQuestions,
                                 contents: contents,
@@ -170,6 +192,8 @@ class _TestViewState extends ConsumerState<TestView> {
                                     borderRadius: BorderRadius.circular(50),
                                     child: MaterialButton(
                                       onPressed: () {
+
+                                        shuffled = false;
 
                                         testWatch.continueButton(
                                           allQuestions: allQuestions,

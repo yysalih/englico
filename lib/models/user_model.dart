@@ -21,6 +21,8 @@ class UserModel implements BaseModel<UserModel> {
   final List? savedWords;
   final List? tests;
   final List? contents;
+  final bool? hasDiscount;
+  final double? money;
 
   UserModel({this.uid, this.name, this.image,
     this.subscriptionDate, this.words, this.tests,
@@ -30,6 +32,8 @@ class UserModel implements BaseModel<UserModel> {
     this.annuallyPoint,
     this.weeklyPoint,
     this.username,
+    this.hasDiscount,
+    this.money,
   });
 
   @override
@@ -49,6 +53,8 @@ class UserModel implements BaseModel<UserModel> {
     tests: json["tests"] as List?,
     contents: json["contents"] as List?,
     savedWords: json["savedWords"] as List?,
+    hasDiscount: json["hasDiscount"] as bool?,
+    money: json["money"] as double?,
   );
 
   @override
@@ -68,6 +74,8 @@ class UserModel implements BaseModel<UserModel> {
     "annuallyPoint": annuallyPoint,
     "monthlyPoint": monthlyPoint,
     "weeklyPoint": weeklyPoint,
+    "hasDiscount": hasDiscount,
+    "money": money,
   };
 
   bool get isUserPremium => subscriptionDate! >= DateTime.now().millisecondsSinceEpoch;

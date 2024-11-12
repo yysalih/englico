@@ -68,7 +68,7 @@ class MainController extends StateNotifier<MainState> {
     await flutterTts.setVolume(1.0);
   }
 
-  void speakText(String text) async {
+  void textToSpeech(String text) async {
     await flutterTts.speak(text);
   }
 

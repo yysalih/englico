@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:englico/controllers/market_controller.dart';
 import 'package:englico/repository/user_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -37,6 +38,8 @@ class _MarketViewState extends ConsumerState<MarketView> {
 
     double width = MediaQuery.of(context).size.width;
 
+    final marketWatch = ref.watch(marketController.notifier);
+
     return Scaffold(
       body: SafeArea(
         child: user.when(
@@ -62,7 +65,7 @@ class _MarketViewState extends ConsumerState<MarketView> {
                         child: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
                       ),
                       SizedBox(width: 10.w,),
-                      Text("Abonelikler", style: Constants.kTitleTextStyle,),
+                      const Text("Abonelikler", style: Constants.kTitleTextStyle,),
                     ],
                   ),
                   SizedBox(height: 20.h,),
@@ -90,12 +93,16 @@ class _MarketViewState extends ConsumerState<MarketView> {
                                       fontWeight: FontWeight.w600
                                   ),),
                                   SizedBox(width: 10.w,),
-                                  Image.asset("assets/icons/done.png", width: 20.w,),
-
+                                  user.isUserPremium ? Image.asset("assets/icons/done.png", width: 20.w,)
+                                  : Icon(Icons.cancel, color: Colors.redAccent),
                                 ],
                               ),
                               SizedBox(height: 5.h,),
-                              Text(DateFormat('dd.MM.yyyy - hh.mm').format(DateTime.fromMillisecondsSinceEpoch(
+                              Text(
+                                !user.isUserPremium ?
+                                    "Abonelik bulunamadı"
+                                    :
+                                DateFormat('dd.MM.yyyy - hh.mm').format(DateTime.fromMillisecondsSinceEpoch(
                                   user.subscriptionDate!)), style: Constants.kTextStyle.copyWith(
                                 fontSize: 18.w
                               ),)
@@ -110,7 +117,7 @@ class _MarketViewState extends ConsumerState<MarketView> {
                     future: init(),
                     builder: (context, snapshot) {
                       try {
-                        if(!snapshot.hasData) return LoadingWidget();
+                        if(!snapshot.hasData) return const LoadingWidget();
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -127,6 +134,9 @@ class _MarketViewState extends ConsumerState<MarketView> {
                                         snapshot.data!.all["monthly"]!
                                             .availablePackages[0]
                                     );
+
+                                    marketWatch.extendSubscriptionDate(user.uid!, const Duration(days: 30));
+
                                   },
                                   child: Container(
                                     width: 150.w, height: 170.h,
@@ -173,6 +183,9 @@ class _MarketViewState extends ConsumerState<MarketView> {
                                         snapshot.data!.all["monthly"]!
                                             .availablePackages[1]
                                     );
+
+                                    marketWatch.extendSubscriptionDate(user.uid!, const Duration(days: 90));
+
                                   },
                                   child: Container(
                                     width: 150.w, height: 170.h,
@@ -223,6 +236,7 @@ class _MarketViewState extends ConsumerState<MarketView> {
                                       snapshot.data!.all["monthly"]!
                                           .availablePackages[2]
                                   );
+                                  marketWatch.extendSubscriptionDate(user.uid!, const Duration(days: 365));
                                   //TODO update in subscription date
                                 },
                                 child: Container(
@@ -271,7 +285,7 @@ class _MarketViewState extends ConsumerState<MarketView> {
                       }
                       catch (E) {
                         debugPrint(E.toString());
-                        return AppErrorWidget();
+                        return const AppErrorWidget();
                       }
                     },
                   ),

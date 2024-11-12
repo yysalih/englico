@@ -171,6 +171,9 @@ class TestController extends StateNotifier<TestState> {
         changeIsAnswered(value: false);
       }
     }
+
+    addInCorrectedKeysValues("", isKey: false, removeAll: true);
+
   }
 
   updateKeysAndValues({required WordMatchModel wordMatchModel}) {

@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../controllers/main_controller.dart';
 import '../../controllers/user_controller.dart';
+import '../../main.dart';
 import '../../repository/user_repository.dart';
 import '../../utils/contants.dart';
 import '../../widgets/status_widgets.dart';
@@ -46,7 +47,7 @@ class SavedWordsView extends ConsumerWidget {
                     GestureDetector(
                       onTap: () {
                         mainWatch.setLanguageLevel("");
-                        Navigator.pushAndRemoveUntil(context, mainWatch.routeToSignInScreen(const MainView()), (route) => false);
+                        Navigator.pushAndRemoveUntil(context, mainWatch.routeToSignInScreen(MyApp()), (route) => false);
                       },
                       child: Container(
                         width: 50, height: 50,

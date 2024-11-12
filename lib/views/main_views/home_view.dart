@@ -14,7 +14,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import '../../main.dart';
 import '../main_view.dart';
 
 class HomeView extends ConsumerWidget {
@@ -34,12 +34,13 @@ class HomeView extends ConsumerWidget {
       loading: () => const LoadingWidget(),
       error: (error, stackTrace) => const AppErrorWidget(),
       data: (user) => Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              SizedBox(height: 20,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -59,7 +60,7 @@ class HomeView extends ConsumerWidget {
                     data: (level) => GestureDetector(
                       onTap: () {
                         mainWatch.setLanguageLevel("");
-                        Navigator.pushAndRemoveUntil(context, mainWatch.routeToSignInScreen(const MainView()), (route) => false);
+                        Navigator.pushAndRemoveUntil(context, mainWatch.routeToSignInScreen(MyApp()), (route) => false);
                       },
                       child: Container(
                         width: 50, height: 50,
@@ -148,6 +149,38 @@ class HomeView extends ConsumerWidget {
                   ),
                 ],
               ),
+              SizedBox(height: 20.h,),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Bizi Sosyal Medyadan Takip Edin", style: Constants.kTitleTextStyle,),
+                  SizedBox(height: 10.h,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      IconButton(
+                        icon: Image.asset("assets/icons/instagram.png", width: 50.w,),
+                        onPressed: () {
+
+                        },
+                      ),
+                      IconButton(
+                        icon: Image.asset("assets/icons/facebook.png", width: 50.w,),
+                        onPressed: () {
+
+                        },
+                      ),
+                      IconButton(
+                        icon: Image.asset("assets/icons/x.png", width: 50.w,),
+                        onPressed: () {
+
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(height: 20,),
             ],
           ),
         ),

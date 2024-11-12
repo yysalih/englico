@@ -87,7 +87,36 @@ class AuthView extends ConsumerWidget {
                           controller: authWatch.passwordRepeatController,
                           validator: (p0) => AppValidators.confirmPasswordValidator(authWatch.passwordController.text, p0),
                         ) : Container(),
+                        SizedBox(height: authState.isRegister && authState.hasInviteCode ? 20 : 0,),
+                        authState.isRegister && authState.hasInviteCode ? AuthTextField(
+                          onChanged: (p0) {
 
+                          },
+                          hintText: "Davet Kodu",
+                          isObscure: false,
+                          prefixIcon: Icons.lock,
+                          controller: authWatch.inviteCodeController,
+                          validator: (p0) => AppValidators.confirmPasswordValidator(authWatch.inviteCodeController.text, p0),
+                        ) : Container(),
+
+                        SizedBox(height: authState.isRegister ? 10 : 0,),
+                        authState.isRegister ? MaterialButton(
+                          onPressed: () {
+                            authWatch.changeCheckBox();
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Davet Kodum Var", style: Constants.kTextStyle,),
+                              Checkbox(
+                                value: authState.hasInviteCode,
+                                shape: CircleBorder(),
+                                onChanged: (value) => authWatch.changeCheckBox(),
+                              )
+                            ],
+                          ),
+                        )
+                            : Container(),
                         SizedBox(height: authState.isRegister ? 10 : 0,),
                         FutureBuilder(
                             future: Authentication.initializeFirebase(context: context, authWatch: authWatch),

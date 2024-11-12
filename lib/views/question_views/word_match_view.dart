@@ -47,20 +47,9 @@ class _WordMatchViewState extends ConsumerState<WordMatchView> {
     final userWatch = ref.watch(userController.notifier);
     final testState = ref.watch(testController);
 
-    //final keys = widget.wordMatchModel.words!.keys.toList().where((element) => !testState.correctKeys.contains(element)).toList()..shuffle();
-    //final values = widget.wordMatchModel.words!.values.toList().where((element) => !testState.correctValues.contains(element)).toList()..shuffle();
-    shuffledKeys = widget.wordMatchModel.words!.keys.toList().where((element) => !testState.correctKeys.contains(element)).toList();
-    shuffledValues = widget.wordMatchModel.words!.values.toList().where((element) => !testState.correctValues.contains(element)).toList();
+    shuffledKeys = widget.wordMatchModel.shuffledWords!.keys.toList().where((element) => !testState.correctKeys.contains(element)).toList();
+    shuffledValues = widget.wordMatchModel.shuffledWords!.values.toList().where((element) => !testState.correctValues.contains(element)).toList();
 
-    if (!isShuffled) {
-      // Initial shuffle
-
-      shuffledKeys!.shuffle();
-      shuffledValues!.shuffle();
-
-      isShuffled = true;
-
-    }
 
     final keys = shuffledKeys ?? [];
     final values = shuffledValues ?? [];

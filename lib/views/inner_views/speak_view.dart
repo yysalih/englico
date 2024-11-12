@@ -27,25 +27,13 @@ class SpeakView extends ConsumerStatefulWidget {
 class _SpeakViewState extends ConsumerState<SpeakView> {
   final CardSwiperController _cardSwiperController = CardSwiperController();
 
+  bool isShuffled = false;
+
   @override
   void initState() {
-    final userStream = ref.read(userStreamProvider(FirebaseAuth.instance.currentUser!.uid));
+    final speakRead = ref.read(speakController.notifier);
+    speakRead.initSpeech();
 
-    userStream.when(
-      data: (user) {
-        final adRead = ref.read(adController.notifier);
-        if(!user.isUserPremium) {
-          adRead.loadInterstitialAd();
-        }
-      },
-      loading: () {
-        debugPrint("loading");
-      },
-      error: (error, stackTrace) {
-        debugPrint(error.toString());
-        debugPrint(stackTrace.toString());
-      },
-    );
     super.initState();
 
   }
@@ -80,7 +68,11 @@ class _SpeakViewState extends ConsumerState<SpeakView> {
               data: (words) {
                 final userWordList = words.where((element) => element.level == level &&
                     user.words!.contains(element.uid)).toList();
-                userWordList.shuffle();
+                if(!isShuffled) {
+                  isShuffled = true;
+
+                  userWordList.shuffle();
+                }
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,7 +89,7 @@ class _SpeakViewState extends ConsumerState<SpeakView> {
                             ),
                             onPressed: () {
                               if(!user.isUserPremium) {
-                                adWatch.showInterstitialAd();
+                                //adWatch.showInterstitialAd();
                               }
                               Navigator.pop(context);
 
@@ -168,14 +160,14 @@ class _SpeakViewState extends ConsumerState<SpeakView> {
                                                       color: Constants.kThirdColor,
                                                     ),
                                                     child: Center(
-                                                      child: Text(userWordList[index].level!,
+                                                      child: Text(word.level!,
                                                         style: Constants.kTitleTextStyle.
                                                         copyWith(color: Colors.white),),
                                                     ),
                                                   ),
                                                   Image.asset("assets/icons/speak.png", width: 40.w,),
                                                   GestureDetector(
-                                                    onTap: () => mainWatch.speakText(userWordList[index].english!.toString()),
+                                                    onTap: () => mainWatch.textToSpeech(word.english!.toString()),
                                                     child: Container(
                                                       width: 50, height: 50,
                                                       decoration: BoxDecoration(
@@ -193,7 +185,7 @@ class _SpeakViewState extends ConsumerState<SpeakView> {
                                                 width: width * .5, height: .5,
                                                 color: Constants.kPrimaryColor.withOpacity(.2),
                                               ),
-                                              Text(userWordList[index].english!.toString(),
+                                              Text(word.english!.toString(),
                                                 style: Constants.kTitleTextStyle.copyWith(
                                                   fontSize: 35.w
                                                 ),),
@@ -225,16 +217,15 @@ class _SpeakViewState extends ConsumerState<SpeakView> {
                                                             text: "Senin söylediğin kelime:\n",
                                                             style: Constants.kTextStyle
                                                                 .copyWith(color: Constants.kSecondColor,
-                                                                fontWeight: FontWeight.bold, fontSize: 18.w),
+                                                                fontWeight: FontWeight.bold, fontSize: 16.w),
 
                                                           ),
                                                           TextSpan(
-                                                              text: speakWatch.speechToText.isListening
-                                                                ? speakState.lastWords : speakState.speechEnabled
-                                                                ? 'Konuşmak için mikrofona tıklayınız...'
+                                                              text: speakState.speechEnabled
+                                                                ? speakState.lastWords
                                                                     : 'Mikrofona izin vermek için tıklayınız',
                                                               style: Constants.kTextStyle.copyWith(
-                                                                  color: Colors.black, fontSize: 16.w
+                                                                  color: Colors.black, fontSize: 18.w
                                                               )
                                                           ),
                                                         ]
@@ -302,7 +293,14 @@ class _SpeakViewState extends ConsumerState<SpeakView> {
             CustomButton(
               color: Constants.kPrimaryColor, iconColor: Colors.white,
               icon: speakWatch.speechToText.isNotListening ? Icons.mic_off : Icons.mic,
-              onTap: speakWatch.speechToText.isNotListening ? speakWatch.startListening : speakWatch.stopListening,
+              onTap: () {
+                if(speakWatch.speechToText.isNotListening) {
+                  speakWatch.startListening();
+                }
+                else {
+                  speakWatch.stopListening();
+                }
+              },
             ),
           ],
         ),

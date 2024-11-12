@@ -180,7 +180,7 @@ class _PracticeViewState extends ConsumerState<PracticeView> {
               color: Constants.kPrimaryColor, iconColor: Colors.white, icon: Icons.thumb_up_alt_outlined,
               onTap: () async {
                 //await userRead.addWordInUserWords(wordUid, userModel);
-                mainWatch.speakText(word.english!);
+                mainWatch.textToSpeech(word.english!);
                 _cardSwiperController.swipe(CardSwiperDirection.right);
               },
             ),
